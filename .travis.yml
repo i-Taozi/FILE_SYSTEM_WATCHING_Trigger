@@ -1,16 +1,22 @@
 language: android
-dist: trusty
-jdk: openjdk8
 android:
   components:
-    - build-tools-30.0.2
-    - android-23
-    - extra-android-m2repository
-    - extra-google-m2repository
+    - tools
+    - platform-tools
+    - tools
+    - build-tools-26.0.2
   licenses:
-    - '.+'
+    - android-sdk-license-bcbbd656
+    - '.*intel.+'
+env:
+  matrix:
+    - ANDROID_SDKS=android-25,sysimg-25  ANDROID_TARGET=android-25  ANDROID_ABI=armeabi-v7a
 before_install:
-  - chmod +x gradlew
-  - yes | sdkmanager "build-tools;30.0.2"
-script:
-  - ./gradlew check
+  - android list sdk --extended --no-ui --all
+  - echo y | android update sdk --no-ui --all --filter sys-img-armeabi-v7a-android-24
+  - echo no | android create avd --force -n test -t android-24 --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+before_script:
+  - chmod a+x ./ci/wait_for_emulator
+  - ./ci/wait_for_emulator
+  - adb shell input keyevent 82 &

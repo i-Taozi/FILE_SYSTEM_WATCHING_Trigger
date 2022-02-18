@@ -1,3 +1,0 @@
-include ':MIDIDriverSample'
-include ':MIDIDriver'
-include ':UnityPlayerMock'
