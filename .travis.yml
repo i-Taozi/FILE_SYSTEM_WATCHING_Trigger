@@ -1,29 +1,65 @@
-sudo: required
 language: android
-jdk: oraclejdk8
-dist: trusty
+
+# Configure Travis CI to set the following environment variables for your builds:
+# - WS_USE_PRODUCTION
+# - WS_PROD_KEYSTORE_PASSWORD
+# - WS_PROD_KEYSTORE_KEY_ALIAS
+# - WS_PROD_KEYSTORE_KEY_PASSWORD
+# - GITHUB_OAUTH_TOKEN (for pushing release APKs)
+
+android:
+  components:
+    # Specify the components that are needed to build the project.
+    # 'tools' is listed twice on purpose (to get the newest version).
+    - tools
+    - platform-tools
+    - tools
+
+    # Build tools & SDK.
+    - build-tools-30.0.2
+    - android-30
+
+    # Additional components
+    - extra-google-m2repository
+    - extra-android-m2repository
 
 before_install:
-  - yes | sdkmanager "platform-tools" "tools" "platforms;android-27"
-    "extras;android;m2repository"
-  - chmod +x load_files.sh
-  - chmod +x build.sh
-  - ./load_files.sh
+  - yes | sdkmanager "platforms;android-30"
 
-script:
-  - ./build.sh
-  - ./gradlew jacocoTestReport
+before_script:
+  # Decrypts the keystore (if this is not a PR build).
+  # The remaining keystore environment variables are configured to be directly
+  # set by Travis CI.
+  - 'if [ ${TRAVIS_SECURE_ENV_VARS} = "true" ] && [ -n "$encrypted_31175506456e_key" ]; then
+       openssl aes-256-cbc -d
+         -K $encrypted_31175506456e_key -iv $encrypted_31175506456e_iv
+         -in keystores/warmshowers.jks.enc -out "$HOME/warmshowers.jks" &&
+       export WS_PROD_KEYSTORE_FILE="$HOME/warmshowers.jks";
+     fi'
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+before_cache:
+  # Cleans up the cache.
+  - rm -f  "$HOME/.gradle/caches/modules-2/modules-2.lock"
+  - rm -fR "$HOME/.gradle/caches/*/plugin-resolution/"
+  - rm -f  "$HOME/warmshowers.jks"
+
+cache:
+  directories:
+    - "$HOME/.android/build-cache"
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+
+before_deploy:
+  - mv app/build/outputs/apk/release/app-release.apk wsandroid-${TRAVIS_TAG}-floss.apk
+  - mv app/build/outputs/mapping/release/mapping.txt wsandroid-${TRAVIS_TAG}-floss-mapping.txt
 
 deploy:
+  # Deploys the release APK for tagged revisions to GitHub.
   provider: releases
+  api_key: "$GITHUB_OAUTH_TOKEN"
+  file:
+    - "wsandroid-${TRAVIS_TAG}-floss.apk"
+    - "wsandroid-${TRAVIS_TAG}-floss-mapping.txt"
   skip_cleanup: true
-  overwrite: true
-  api_key:
-    secure: CkKyomzGdEMvZKyNEPU6uU9sfG4zJKQ7FcDG7Vgi9SNFgrwD7v2wYrw53ABRW+eYTifxivbzSnNYOwh/Jd6ea3A7XqFdW9DpPgmDq32A9rPPSP8DEM2tDfE6m0A/Jzx2d3rIpK54KCISHQoRnnEU8QyBA9vqoTmO1qUWsBsXiWo=
-  file: openmrs-client/build/outputs/apk/release/openmrs-client-release.apk
   on:
     tags: true
-    repo: openmrs/openmrs-contrib-android-client
