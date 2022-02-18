@@ -1,23 +1,26 @@
-sudo: false
 language: java
-jdk:
-  - openjdk8
-env:
-  global:
-    - JAVA_OPTS="-Xmx2048M"
-    - GRADLE_OPTS="-Xmx2048M"
-jobs:
+dist: xenial
+
+matrix:
   include:
-    - name: "Plug-in registry pull-request"
-      install: "./gradlew"
-      script: skip
-      deploy:
-        - provider: script
-          script: bash .travis/registry.sh
-          skip_cleanup: true
-          on:
-            tags: true
-            repo: dita-ot/dita-ot
-notifications:
-  slack:
-    secure: IAA4d9O2Dw1hkpY9cwxJz++VMjkgbV3EuaS09DGFujvHl2eQtpKTloE0/CDF+NZA4tcbH1dNqsGw3ETLmrqA581CLpmiiq3LG02cDMoSXZeOKB/9vo6tvLFg0UMawzo+FomJS/hvCmS5KirrFqZQKE5g6SCC05UBM5nwI5d0vOw=
+    - jdk: openjdk8
+    - jdk: openjdk11
+
+before_install: chmod +x gradlew
+env:
+  - TRAVIS=true
+
+install: ./gradlew assemble --no-daemon
+script: travis_wait 20 ./gradlew check --no-daemon
+
+after_success:
+  - ./gradlew jacocoTestReport --no-daemon
+  - bash <(curl -s https://codecov.io/bash) -F linux
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/

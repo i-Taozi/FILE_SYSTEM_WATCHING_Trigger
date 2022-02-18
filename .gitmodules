@@ -1,4 +1,0 @@
-[submodule "src/main/docsrc"]
-	path = src/main/docsrc
-	url = https://github.com/dita-ot/docs.git
-
