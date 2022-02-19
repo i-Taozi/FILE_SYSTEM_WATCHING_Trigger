@@ -1,193 +1,57 @@
-# A MongoDB-based store for Quartz.
+# Countly Android SDK <!-- [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-android.png)](https://travis-ci.org/Countly/countly-sdk-android) --> [![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=9)
 
-This is a MongoDB-backed job store for the [Quartz scheduler](http://quartz-scheduler.org/).
+We're hiring: Countly is looking for Android SDK developers, full stack devs, devops and growth hackers (remote work). [Click this link for job description](https://angel.co/countly/jobs/)
 
-## Maven Artifacts
+* **Slack user?** [Join our Slack community](http://slack.count.ly)
+* **Questions?** [Ask in our Community forum](http://community.count.ly)
 
-Artifacts are released to [Bintray](https://bintray.com/michaelklishin/maven/).
+## What is Countly?
+[Countly](http://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics), and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privacy by design](https://count.ly/your-data-your-rules), Countly allows you to innovate and enhance your products to provide personalized and customized customer experiences, and meet key business and revenue goals.
 
-If you are using Maven, add the following repository
-definition to your `pom.xml`:
+Track, measure, and take action - all without leaving Countly.
 
-``` xml
-<repositories>
-    <repository>
-        <id>michaelklishin</id>
-        <url>https://dl.bintray.com/michaelklishin/maven/</url>
-    </repository>
-</repositories>
-```
+## About
 
-With Gradle, add the following to your `build.gradle`:
+This repository includes the Countly Android SDK. It can also be used to get user insights from Android TV or Wear devices.
 
-``` groovy
-repositories {
-    maven {
-        url "https://dl.bintray.com/michaelklishin/maven/"
-    }
-}
-```
+Need help? See [Countly SDK for Android](http://resources.count.ly/v1.0/docs/countly-sdk-for-android) documentation at [Countly Resources](http://resources.count.ly), or ask us on our [Countly Analytics Community Slack channel](http://slack.count.ly).
 
+## Sample Android application
 
-### The Most Recent Release
+We have a comprehensive [sample Android application](https://github.com/Countly/countly-sdk-android/tree/master/app) which includes this SDK. Feel free to use this for testing purposes as you develop your application.
 
-With Maven:
+![Android-sample-app](https://count.ly/github/countly-android-sample-app.png)
 
-``` xml
-<dependency>
-    <groupId>com.novemberain</groupId>
-    <artifactId>quartz-mongodb</artifactId>
-    <version>2.2.0-rc2</version>
-</dependency>
-```
+## Security
 
-With Gradle:
+Security is very important to us. If you discover any issue regarding security, please disclose the information responsibly by sending an email to security@count.ly and **not by creating a GitHub issue**.
 
-``` groovy
-compile "com.novemberain:quartz-mongodb:2.2.0-rc2"
-```
+## Other Github resources
 
+This SDK needs one of the following Countly Editions to work: 
 
-## Usage
+* Countly Community Edition, [downloadable from Github](https://github.com/Countly/countly-server)
+* [Countly Enterprise Edition](http://count.ly/product)
 
-Like most things in Quartz, this job store is configured
-via a property file, `quartz.properties`:
+For more information about Countly Enterprise Edition, see [comparison of different Countly editions](https://count.ly/compare/)
 
-``` ini
-# Use the MongoDB store
-org.quartz.jobStore.class=com.novemberain.quartz.mongodb.MongoDBJobStore
-# MongoDB URI (optional if 'org.quartz.jobStore.addresses' is set)
-org.quartz.jobStore.mongoUri=mongodb://localhost:27020
-# comma separated list of mongodb hosts/replica set seeds (optional if 'org.quartz.jobStore.mongoUri' is set)
-org.quartz.jobStore.addresses=host1,host2
-# database name
-org.quartz.jobStore.dbName=quartz
-# Will be used to create collections like mycol_jobs, mycol_triggers, mycol_calendars, mycol_locks
-org.quartz.jobStore.collectionPrefix=mycol
-# thread count setting is ignored by the MongoDB store but Quartz requries it
-org.quartz.threadPool.threadCount=1
-```
+There are also other Countly SDK repositories (both official and community supported) on [Countly resources](http://resources.count.ly/v1.0/docs/downloading-sdks).
 
+## How can I help you with your efforts?
+Glad you asked. We need ideas, feedback and constructive comments. All your suggestions will be taken care with utmost importance. We are on [Twitter](http://twitter.com/gocountly) and [Facebook](http://www.facebook.com/Countly) if you would like to keep up with our fast progress!
 
-### Error Handling in Clustered Mode
+## Badges
 
-When running in clustered mode, the store will periodically check in
-with the cluster. Should that operation fail, the store needs to
-decide what to do:
+If you like Countly, [why not use one of our badges](https://count.ly/brand-assets) and give a link back to us, so others know about this wonderful platform? 
 
- * Shut down
- * Do nothing and optimistically proceed
+<a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/dark.svg" alt="Countly - Product Analytics" /></a>
 
-Different strategies make sense in different scenarios. Pausing Quartz would
-be optimal but this job store currently doesn't have that option.
+    <a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/dark.svg" alt="Countly - Product Analytics" /></a>
 
-The `org.quartz.jobStore.checkInErrorHandler.class` property controls the error handler
-implementation.
+<a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/light.svg" alt="Countly - Product Analytics" /></a>
 
-To shut down the JVM (which is the default), add the following key to `quartz.properties`
+    <a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/light.svg" alt="Countly - Product Analytics" /></a>
 
-    org.quartz.jobStore.checkInErrorHandler.class=com.novemberain.quartz.mongodb.cluster.KamikazeErrorHandler
+### Support
 
-to ignore the failure:
-
-    org.quartz.jobStore.checkInErrorHandler.class=com.novemberain.quartz.mongodb.cluster.NoOpErrorHandler
-
-
-
-
-### Clojure and Quartzite
-
-If you use [Quartzite](http://clojurequartz.info) or want your job classes to be available
-to Clojure code, use:
-
-    org.quartz.jobStore.class=com.novemberain.quartz.mongodb.DynamicMongoDBJobStore
-
-(this assumes Clojure jar is on classpath).
-
-### Job Data storage
-By default you are allowed to pass any `java.io.Serializable` objects inside `JobDataMap`.
-It will be serialized and stored as a `base64` string.
-
-If your `JobDataMap` only contains simple types, it may be stored directly inside MongoDB to save some performance.
-
-``` ini
-org.quartz.jobStore.jobDataAsBase64=false
-```
-
-## Clustering
-
-To enable clustering set the following property:
-
-``` ini
-# turn clustering on:
-org.quartz.jobStore.isClustered=true
-
-# Must be unique for each node or AUTO to use autogenerated:
-org.quartz.scheduler.instanceId=AUTO
-# org.quartz.scheduler.instanceId=node1
-
-# The same cluster name on each node:
-org.quartz.scheduler.instanceName=clusterName
-```
-
-Each node in a cluster must have the same properties, except *instanceId*.
-To setup other clusters use different collection prefix:
-
-``` ini
-org.quartz.scheduler.collectionPrefix=yourCluster
-```
-
-Different time settings for cluster operations:
-
-``` ini
-# Frequency (in milliseconds) at which this instance checks-in to cluster.
-# Affects the rate of detecting failed instances.
-# Defaults to 7500 ms.
-org.quartz.jobStore.clusterCheckinInterval=10000
-
-# Time in millis after which a trigger can be considered as expired.
-# Defaults to 10 minutes:
-org.quartz.jobStore.triggerTimeoutMillis=1200000
-
-# Time in millis after which a job can be considered as expired.
-# Defaults to 10 minutes:
-org.quartz.jobStore.jobTimeoutMillis=1200000
-
-# Time limit in millis after which a trigger should be treated as misfired.
-# Defaults to 5000 ms.
-org.quartz.jobStore.misfireThreshold=10000
-
-# WriteConcern timeout in millis when writing in Replica Set.
-# Defaults to 5000 ms.
-org.quartz.jobStore.mongoOptionWriteConcernTimeoutMillis=10000
-```
-
-## Continuous Integration
-
-[![Build Status](https://secure.travis-ci.org/michaelklishin/quartz-mongodb.png?branch=master)](http://travis-ci.org/michaelklishin/quartz-mongodb)
-
-CI is hosted by [Travis CI](http://travis-ci.org/)
-
-
-## Copyright & License
-
-(c) Michael S. Klishin, Alex Petrov, 2011-2020.
-
-[Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
-
-
-## FAQ
-
-### Project Origins
-
-The project was originally started by MuleSoft. It supports all Quartz trigger types and
-tries to be as feature complete as possible.
-
-### Why the Fork?
-
-MuleSoft developers did not respond to attempts to submit pull
-requests for several months. As more and more functionality was added
-and implementation code refactored, I decided to completely separate
-this fork form GitHub forks network because the project is now too
-different from the original one. All changes were made with respect to
-the Apache Public License 2.0.
+For Community support, visit [http://community.count.ly](http://community.count.ly "Countly Community Forum").
