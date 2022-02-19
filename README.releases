@@ -1,0 +1,25 @@
+Introduction
+############
+
+This document describes how to create a Maven release of JFreeSane.
+
+Author: James Ring (sjr@jdns.org)
+
+Making the release
+##################
+
+$ ./gradlew clean
+
+Change build.gradle to have the appropriate version in releaseVersion.
+
+$ ./gradlew -PbintrayUsername=<user> -PbintrayApiKey=<apiKey> bintrayUpload
+
+* go to http://bintray.com/
+* select the latest version, then click "Publish". JFreeSane is now available
+  on JCenter
+* click on "Maven Central". Enter your Sonatype ORSSH password. Ensure the
+  "Close and release" checkbox is selected and click "Sync". JFreeSane will then
+  go out to Maven Central shortly (usually within 10 minutes).
+
+$ git tag jfreesane-<releaseVersion> # e.g. git tag jfreesane-0.96
+$ git push --tags
