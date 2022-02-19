@@ -1,57 +1,36 @@
-# Countly Android SDK <!-- [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-android.png)](https://travis-ci.org/Countly/countly-sdk-android) --> [![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=9)
+# Primitive FTPd
 
-We're hiring: Countly is looking for Android SDK developers, full stack devs, devops and growth hackers (remote work). [Click this link for job description](https://angel.co/countly/jobs/)
+FTP server app for android.
 
-* **Slack user?** [Join our Slack community](http://slack.count.ly)
-* **Questions?** [Ask in our Community forum](http://community.count.ly)
+<!--
+[![Build Status](https://travis-ci.org/wolpi/prim-ftpd.png)](https://travis-ci.org/wolpi/prim-ftpd)
+-->
+![Code Size](https://img.shields.io/github/languages/code-size/wolpi/prim-ftpd.svg?style=popout)
 
-## What is Countly?
-[Countly](http://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics), and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privacy by design](https://count.ly/your-data-your-rules), Countly allows you to innovate and enhance your products to provide personalized and customized customer experiences, and meet key business and revenue goals.
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q8TU8ZQX3WV8J)
 
-Track, measure, and take action - all without leaving Countly.
+[<img alt="Get it on F-Droid" height="60" src="https://f-droid.org/badge/get-it-on.png" />](https://f-droid.org/app/org.primftpd)
 
-## About
+[<img alt="Get it on Google Play" height="60" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" />](https://play.google.com/store/apps/details?id=org.primftpd)
 
-This repository includes the Countly Android SDK. It can also be used to get user insights from Android TV or Wear devices.
+[<img alt="Get it on Amazon" height="45" style="margin-left: 8px;" src="https://images-na.ssl-images-amazon.com/images/G/01/AmazonMobileApps/amazon-apps-store-us-black.png" />](http://www.amazon.com/wolpi-primitive-FTPd/dp/B00KERCPNY/ref=sr_1_1)
 
-Need help? See [Countly SDK for Android](http://resources.count.ly/v1.0/docs/countly-sdk-for-android) documentation at [Countly Resources](http://resources.count.ly), or ask us on our [Countly Analytics Community Slack channel](http://slack.count.ly).
 
-## Sample Android application
+## Some features:
+* Can optionally be started on system boot
+* Shows statusbar notification when server is running
+* Server can be stopped from statusbar
+* Shows information about how to connect on main screen
+* Optional wakelock while server runs to avoid uploads and downloads to be aborted
+* Optional encryption via sftp
+* Server can be announced
+* Public key authentication for sftp
+* Optional anonymous login
+* Widget to start/stop server
+* Plugins for powertoggles and tasker
+* Android 7 Quicksettings Tile
+* Optional root access
+* Optional support for Android Storage Access Framework to access external sd-card the official way (NOTE requires selecting a directory, not the root of the sd-card).
 
-We have a comprehensive [sample Android application](https://github.com/Countly/countly-sdk-android/tree/master/app) which includes this SDK. Feel free to use this for testing purposes as you develop your application.
 
-![Android-sample-app](https://count.ly/github/countly-android-sample-app.png)
-
-## Security
-
-Security is very important to us. If you discover any issue regarding security, please disclose the information responsibly by sending an email to security@count.ly and **not by creating a GitHub issue**.
-
-## Other Github resources
-
-This SDK needs one of the following Countly Editions to work: 
-
-* Countly Community Edition, [downloadable from Github](https://github.com/Countly/countly-server)
-* [Countly Enterprise Edition](http://count.ly/product)
-
-For more information about Countly Enterprise Edition, see [comparison of different Countly editions](https://count.ly/compare/)
-
-There are also other Countly SDK repositories (both official and community supported) on [Countly resources](http://resources.count.ly/v1.0/docs/downloading-sdks).
-
-## How can I help you with your efforts?
-Glad you asked. We need ideas, feedback and constructive comments. All your suggestions will be taken care with utmost importance. We are on [Twitter](http://twitter.com/gocountly) and [Facebook](http://www.facebook.com/Countly) if you would like to keep up with our fast progress!
-
-## Badges
-
-If you like Countly, [why not use one of our badges](https://count.ly/brand-assets) and give a link back to us, so others know about this wonderful platform? 
-
-<a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/dark.svg" alt="Countly - Product Analytics" /></a>
-
-    <a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/dark.svg" alt="Countly - Product Analytics" /></a>
-
-<a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/light.svg" alt="Countly - Product Analytics" /></a>
-
-    <a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/light.svg" alt="Countly - Product Analytics" /></a>
-
-### Support
-
-For Community support, visit [http://community.count.ly](http://community.count.ly "Countly Community Forum").
+Want to help translating it? See our shiny [weblate instance](https://pftpd.rocks/projects/pftpd/pftpd/)!
