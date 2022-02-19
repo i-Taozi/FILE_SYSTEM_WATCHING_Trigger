@@ -1,118 +1,220 @@
-plugins {
-    id "java-library"
-    id "application"
-    id "maven-publish"
-    id "signing"
-    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+/*
+ * Copyright (C) 2014-2015 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import java.text.SimpleDateFormat
+
+buildscript {
+  repositories {
+    jcenter()
+  }
 }
 
-//apply plugin: 'application'
-//apply plugin: 'java'
-//apply plugin: 'maven-publish'
-//apply plugin: 'io.codearte.nexus-staging'
-
-// not neeeded but does not work without
-//mainClassName = "foo.Bar" // not needed but does not work without
-
+plugins {
+  id 'java'
+  id 'idea'
+  id 'eclipse'
+  id 'jacoco'
+  id 'maven-publish'
+  id "com.jfrog.bintray" version "1.8.5"
+  id "com.github.hierynomus.license" version "0.15.0"
+  id 'net.researchgate.release' version '2.8.1'
+  id "io.spring.dependency-management" version "1.0.10.RELEASE"
+  id 'com.github.kt3k.coveralls' version '2.10.2'
+  id "com.github.ben-manes.versions" version "0.33.0"
+}
 
 repositories {
-    mavenCentral()
-//    mavenLocal()
+  jcenter()
+  mavenCentral()
 }
 
+version = project.version
+group = project.group
+
+sourceCompatibility = project.javaVersion
+targetCompatibility = project.javaVersion
+
+Date buildTimeAndDate = new Date()
+ext {
+  buildDate = new SimpleDateFormat('dd-MMM-yyyy').format(buildTimeAndDate)
+  buildTime = new SimpleDateFormat('hh:mm aa').format(buildTimeAndDate)
+}
+
+dependencyManagement {
+    imports {
+      mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+    }
+}
 
 dependencies {
-    implementation 'org.slf4j:jcl-over-slf4j:1.7.7'
+  compile "org.springframework.boot:spring-boot-starter-web"
+  compile("org.springframework:spring-core") {
+    exclude module: 'commons-logging'
+  }
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.10.0'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.10.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
+  compile 'de.neuland-bfi:spring-pug4j:2.0.0-alpha-2'
+  compile 'de.neuland-bfi:pug4j:2.0.0-alpha-2'
 
-    implementation 'com.google.guava:guava:30.0-jre'
-
-    // Logging
-    implementation 'org.slf4j:slf4j-api:1.7.7'
-    implementation 'org.apache.commons:commons-lang3:3.3.2'
-    implementation 'commons-codec:commons-codec:1.10'
-
-    // http tools
-    api 'org.yamj:api-common:1.1'
-
-    // testing
-    testImplementation 'junit:junit:4.13.1'
+  testCompile 'junit:junit'
+  testCompile "org.springframework:spring-test"
+  testCompile 'org.springframework.boot:spring-boot-test'
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
+def jarManifestAttributes = [
+  'Built-By'  : System.properties['user.name'],
+  'Created-By': System.properties['java.version'] + ' (' + System.properties['java.vendor'] + ' ' + System.getProperty("java.vm.version") + ")",
+  'Build-Date': buildDate,
+  'Build-Time': buildTime]
+
+jar {
+  manifest {
+    attributes(jarManifestAttributes)
+  }
 }
 
-javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
 
+def javaApiUrl = 'http://docs.oracle.com/javase/1.7.0/docs/api/'
+def groovyApiUrl = 'http://groovy.codehaus.org/gapi/'
 
-//http://stackoverflow.com/questions/34377367/why-is-gradle-install-replacing-my-version-with-unspecified
-group 'com.github.holgerbrandl'
-version '1.12'
+tasks.withType(Javadoc) {
+    options.links(javaApiUrl, groovyApiUrl)
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+  tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+  }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives sourcesJar, javadocJar
+}
+
+jacocoTestReport {
+  reports {
+    xml.enabled = true // coveralls plugin depends on xml format report
+    html.enabled = true
+  }
+}
+
+license {
+  excludes(["**/*.pug4j", "**/*.pug", "**/*.factories"])
+  ext.year = Calendar.getInstance().get(Calendar.YEAR)
+  ext.name = 'Domingo Suarez Torres'
+  ext.email = 'domingo.suarez@gmail.com'
+
+  header rootProject.file('LICENSE')
+  strictCheck true
+}
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from(components.java)
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      artifact sourcesJar
+      artifact javadocJar
 
-            pom {
-                name = "themoviedbapi"
-                description = 'A java-wrapper around the JSON API provided by TMdB, which is an open database for movie and film content.'
-                url = 'https://github.com/holgerbrandl/themoviedbapi'
+      pom.withXml {
+        def root = asNode()
+        root.appendNode('name', project.pomName)
+        root.appendNode('description', project.description)
+        root.appendNode('url', 'https://github.com/domix/jade4j-spring-boot-starter')
+        root.appendNode('inceptionYear', '2014')
+        root.appendNode('packaging', 'jar')
 
-                licenses {
-                    license {
-                        name = 'BSD'
-                        url = 'https://github.com/holgerbrandl/themoviedbapi/blob/master/LICENCE.txt'
-                    }
-                }
+        def scm = root.appendNode('scm')
+        scm.appendNode('url', 'https://github.com/domix/jade4j-spring-boot-starter')
+        scm.appendNode('connection', 'scm:https://domix@github.com/domix/jade4j-spring-boot-starter.git')
+        scm.appendNode('developerConnection', 'scm:git@github.com:domix/jade4j-spring-boot-starter.git')
+
+        def license = root.appendNode('licenses').appendNode('license')
+        license.appendNode('name', 'The Apache Software License, Version 2.0')
+        license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+        license.appendNode('distribution', 'repo')
+
+        def developers = root.appendNode('developers')
+        def domix = developers.appendNode('developer')
+        domix.appendNode('id', 'domix')
+        domix.appendNode('name', 'Domingo Suarez Torres')
+        domix.appendNode('email', 'domingo.suarez@gmail.com')
 
 
-                scm {
-                    connection = 'scm:git:github.com/holgerbrandl/themoviedbapi.git'
-                    url = 'https://github.com/holgerbrandl/themoviedbapi.git'
-                }
-
-
-                developers {
-                    developer {
-                        id = 'holgerbrandl'
-                        name = 'Holger Brandl'
-                        email = 'holgerbrandl@gmail.com'
-                    }
-                }
-//
-//                withXml {
-//                    def dependenciesNode = asNode().appendNode('dependencies')
-//
-//                    project.configurations.implementation.allDependencies.each {
-//                        def dependencyNode = dependenciesNode.appendNode('dependency')
-//                        dependencyNode.appendNode('groupId', it.group)
-//                        dependencyNode.appendNode('artifactId', it.name)
-//                        dependencyNode.appendNode('version', it.version)
-//                    }
-//                }
-            }
+        root.dependencies.'*'.findAll() {
+          it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+            dep.name == it.artifactId.text()
+          }
+        }.each() {
+          it.scope*.value = 'compile'
         }
+      }
     }
+  }
 }
 
+bintray {
+  user = project.hasProperty('bintrayUsername') ? bintrayUsername : ''
+  key = project.hasProperty('bintrayApiKey') ? bintrayApiKey : ''
 
-if (project.hasProperty('ossrhUsername')) nexusPublishing {
-    repositories {
-        sonatype {
-//            nexusUrl = uri("https://your-server.com/staging")
-            snapshotRepositoryUrl = uri(project.properties["sonatypeStagingProfileId"])
-            username = project.properties["ossrhUsername"]
-            password = project.properties["ossrhPassword"]
-        }
+  publications = ['mavenJava']
+  dryRun = false //Whether to run this as dry-run, without deploying
+  publish = true //If version should be auto published after an upload
+  pkg {
+    repo = 'spring-boot'
+    userOrg = 'domix'
+    name = project.name
+    desc = project.description
+    websiteUrl = 'https://github.com/domix/jade4j-spring-boot-starter'
+    issueTrackerUrl = 'https://github.com/domix/jade4j-spring-boot-starter/issues'
+    vcsUrl = 'https://github.com/domix/jade4j-spring-boot-starter.git'
+    licenses = ['Apache-2.0']
+    labels = ['spring-boot', 'jade', 'starter', 'spring', 'spring-mvc']
+    publicDownloadNumbers = true
+    attributes = ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee']
+    //Optional version descriptor
+    version {
+      name = project.version
+      desc = project.description
+      gpg {
+        sign = project.hasProperty('bintrayGpgPassphrase')
+        passphrase = project.hasProperty('bintrayGpgPassphrase') ? bintrayGpgPassphrase : ''
+      }
+      mavenCentralSync {
+        sync = false
+        user = ''
+        password = ''
+        close = '1'
+      }
     }
+  }
 }
 
-if (project.hasProperty('signing.keyId')) signing {
-    sign publishing.publications.mavenJava
-}
+
+
+javadoc.options.links("http://docs.oracle.com/javase/7/docs/api/", "http://docs.spring.io/spring/docs/4.2.x/javadoc-api/", "http://docs.spring.io/spring-boot/docs/${springBootVersion}/api/", "https://docs.oracle.com/javaee/5/api/")
+
+classes.dependsOn licenseFormat
+jacocoTestReport.dependsOn check
+bintrayUpload.dependsOn jacocoTestReport
+createReleaseTag.dependsOn bintrayUpload
