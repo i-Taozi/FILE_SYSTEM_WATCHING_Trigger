@@ -1,216 +1,176 @@
-Cloudinary Android SDK
+gerrit-intellij-plugin
 ======================
 
-Cloudinary is a cloud service that offers a solution to a web application's entire image management pipeline.
+[![Build Status](https://travis-ci.org/uwolfer/gerrit-intellij-plugin.svg)](https://travis-ci.org/uwolfer/gerrit-intellij-plugin)
+[![Version](http://phpstorm.espend.de/badge/7272/version)](https://plugins.jetbrains.com/plugin/7272)
+[![Downloads](http://phpstorm.espend.de/badge/7272/downloads)](https://plugins.jetbrains.com/plugin/7272)
+
+Introduction
+-----------
+
+Unofficial [IntelliJ Platform](http://www.jetbrains.com/idea/) plugin for the
+[Gerrit Code Review](https://www.gerritcodereview.com/) tool. It supports any product based on the IntelliJ platform:
+* IntelliJ IDEA
+* IntelliJ IDEA CE
+* RubyMine
+* WebStorm
+* PhpStorm
+* PyCharm
+* PyCharm CE
+* AppCode
+* Android Studio
+* DataGrip
+* CLion
+* GoLand
+* Rider
+* MPS
+
+*Compiled with Java 1.6*
+
+Only Gerrit 2.6 or newer is supported (missing / incomplete REST API in older versions).
+
+Installation
+------------
+- Using IDE built-in plugin system (suggested: you'll get notified when an update is available):
+  - <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> >
+  <kbd>Search for "Gerrit"</kbd> > <kbd>Install Plugin</kbd>
+- Manually:
+  - Download the [release](https://github.com/uwolfer/gerrit-intellij-plugin/releases)
+  matching your IntelliJ version and install it manually using
+  <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Install plugin from disk...</kbd>
+
+Restart your IDE.
+
+###### Pre-Releases
+If you want to get new releases earlier, you can subscribe to the release-candidate plugin channel:
+
+1. Copy the following URL: https://plugins.jetbrains.com/plugins/rc/7272
+2. Use the copied URL as the [Custom Plugin Repository](https://www.jetbrains.com/idea/help/managing-enterprise-plugin-repositories.html)
+3. Reload the list of plugins
+4. Search for the 'Gerrit' plugin in the plugin manager and install it
+
+Your Support
+------------
+If you like this plugin, you can support it:
+* Spread it: Tell your friends who are using IntelliJ and Gerrit about this plugin (or even encourage them to use these fantastic products!)
+* Vote for it: Write your review and vote for it at the [IntelliJ plugin repository](http://plugins.jetbrains.com/plugin/7272).
+* Star it: [Star it at GitHub](https://github.com/uwolfer/gerrit-intellij-plugin). GitHub account required.
+* Improve it: Report bugs or feature requests. Or even fix / implement them by yourself - everything is open source!
+* Donate: You can find donation-possibilities at the bottom of this file.
+
+Troubleshooting
+---------------
+### List of changes is empty
+By default, you will only see changes to Git repositories that are configured in the current project of your IntelliJ IDE.
+* Make sure that Git repositories are configured in the 'Version Control' settings.
+* Make sure that the Git repository remote url (at least one of them) is on the same host as configured in Gerrit plugin settings. Or:
+* Set the 'Clone Base URL' if it differs from the Gerrit web url. Or:
+* Add a remote whose name equals the Gerrit project name with Gerrit web url as remote url.
+
+### Error-message when clicking a change: "VcsException: fatal: bad object"
+In Gerrit 2.8, fetch information was pulled out of default functionality into a plugin.
+You need to install the plugin <code>download-commands</code>. When you run the Gerrit update procedure, it asks you to install
+this plugin (but it isn't selected by default). Just run the update script again if you have not installed it yet.
+
+When installing Gerrit 2.8 (or newer) from scratch (rather than using the update script) the following command will install the
+<code>download-commands</code> plugin (for a new installation or an existing Gerrit instance):
+
+    $ java -jar gerrit.war init -d {gerrit-instance} --install-plugin=download-commands
+
+
+### Error-message when loading changes: "SSLException: Received fatal alert: bad_record_mac"
+There are two workarounds for this issue:
+* allow TLSv1 (instead of SSLv3 only) connections in your reverse-proxy in front of Gerrit. SSLv3 is considered insecure, therefore TLS should be the default in any case.
+* use a recent Java setup (> 1.6)
+
+### Error-message when loading changes: "Bad Request. Status-Code: 400. Content: too many terms in query."
+Open plugin settings and enable the option "List all Gerrit changes (instead of changes from currently open project only)".
+
+### Checking out from VCS with Gerrit plugin does not work
+Checking out directly with the Gerrit plugin does not work for some authentication methods. If you get an authentication
+error or checking out does not properly finish, you can try to:
+* use SSH clone URL in checkout dialog (you can find the SSH URL in the Gerrit Web UI project settings)
+* or: check out with the default Git plugin and set up the Gerrit plugin manually afterwards
+
+You can find background information about this issue in a [Gerrit mailing list topic](https://groups.google.com/forum/#!topic/repo-discuss/UnQd3HsL820).
+
+### Loading file-diff-list is slow
+Diff viewing is based on Git operations (i.e. it fetches the commit from the Gerrit remote). When loading the file list
+takes a lot of time, you can run a local "[git gc](https://www.kernel.org/pub/software/scm/git/docs/git-gc.html)"
+and ask your Gerrit administrator to do run a "[gerrit gc](https://gerrit-review.googlesource.com/Documentation/cmd-gc.html)".
+
+### Authenticate against *-review.googlesource.com
+It's a bit of manual work to do:
+<kbd>Settings</kbd> -> <kbd>HTTP Credentials</kbd> -> <kbd>Obtain password</kbd>
 
-Easily upload images to the cloud. Automatically perform smart image resizing, cropping and conversion without installing any complex software.
-Integrate Facebook or Twitter profile image extraction in a snap, in any dimension and style to match your website’s graphics requirements.
-Images are seamlessly delivered through a fast CDN, and much much more.
+Then search for the line in the text area starting with `*-review.googlesource.com` (e.g. `gerrit-review.googlesource.com`) and extract username and password:
 
-Cloudinary offers comprehensive APIs and administration capabilities and is easy to integrate with any web application, existing or new.
+gerrit-review.googlesource.com,FALSE,/,TRUE,12345678,o,**git-username.gmail.com**=**password-until-end-of-line**
 
-Cloudinary provides URL and HTTP based APIs that can be easily integrated with any Web development framework.
+Architecture
+------------
+### IntelliJ Integration
+The plugin is integrated into the IntelliJ IDE with a [tool window](http://confluence.jetbrains.com/display/IDEADEV/IntelliJ+IDEA+Tool+Windows).
+See package <code>com.urswolfer.intellij.plugin.gerrit.ui</code>.
 
-## Requirements
-The library requires Android version 4.0.3 (Ice Cream Sandwich) and up.
+### REST API
+Most of the communication between the plugin and a Gerrit instance is based on the [Gerrit REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html).
+The REST specific part is available as [standalone implementation](https://github.com/uwolfer/gerrit-rest-java-client).
+See package <code>com.urswolfer.intellij.plugin.gerrit.rest</code>.
 
-## Gradle Integration
-Add the following dependency to your build.gradle:
+### Git
+Some actions like comparing and listing files are based on Git operations.
+[IntelliJ Git4Idea](http://git.jetbrains.org/?p=idea/community.git;a=tree;f=plugins/git4idea) is used for these operations.
+See package <code>com.urswolfer.intellij.plugin.gerrit.git</code>.
 
-`implementation group: 'com.cloudinary', name: 'cloudinary-android', version: '1.30.0'`
-## Manual Setup ######################################################################
-Download cloudinary-android-1.30.0.jar from [here](http://central.maven.org/maven2/com/cloudinary/cloudinary-android/1.30.0/cloudinary-android-1.30.0.aar) and cloudinary-core-1.26.0.jar from [here](http://central.maven.org/maven2/com/cloudinary/cloudinary-core/1.26.0/cloudinary-core-1.26.0.jar) and put them in your libs folder.
 
-## Maven Integration ######################################################################
-The cloudinary_android library is available in [Maven Central](http://repo1.maven.org/maven/). To use it, add the following dependency to your pom.xml:
+Build (and develop!) the Plugin
+------------------
 
-    <dependency>
-        <groupId>com.cloudinary</groupId>
-        <artifactId>cloudinary-android</artifactId>
-        <version>1.30.0</version>
-    </dependency>
+It's very easy to set it up as an IntelliJ project.
 
+1. Activate plugins ```Gradle```, ```Plugin DevKit``` and ```UI Designer``` in IntelliJ.
+2. ```git clone https://github.com/uwolfer/gerrit-intellij-plugin``` (probably switch to ```intellij{version}``` branch, but keep in mind that pull-requests should be against the default branch ("intellij13" and older are not supported anymore))
+3. Open checked out project in IntelliJ ("File" -> "New" -> "Project from Existing Sources" -> select file ```build.gradle``` in ```gerrit-intellij-plugin``` folder and press "OK")
+4. Create a new run configuration: "Gradle" -> "Gradle project": select the only project -> "Tasks": "runIde"
+5. Press "Debug" button. IntelliJ should start with a clean workspace (development sandbox). You need to checkout a
+   project to see changes (it shows only changes for Git repositories that are set up in current workspace by default).
 
-## Try it right away
+Once ```build.gradle``` gets updated, you need to "Refresh all Gradle projects" in the Gradle panel.
 
-Sign up for a [free account](https://cloudinary.com/users/register/free) so you can try out image transformations and seamless image delivery through CDN.
 
-*Note: Replace `demo` in all the following examples with your Cloudinary's `cloud name`.*  
+Contributing
+------------
+Check the [`CONTRIBUTING.md`](./CONTRIBUTING.md) file.
 
-Accessing an uploaded image with the `sample` public ID through a CDN:
 
-    http://res.cloudinary.com/demo/image/upload/sample.jpg
+Credits
+------
+* IntelliJ Github plugin (some code of this plugin is based on its code)
 
-![Sample](https://res.cloudinary.com/demo/image/upload/w_0.4/sample.jpg "Sample")
+Thanks to [JetBrains](https://www.jetbrains.com/) for providing a free licence for developing this project.
 
-Generating a 150x100 version of the `sample` image and downloading it through a CDN:
+Donations
+--------
+If you like this work, you can support it with
+[this donation link](https://www.paypal.com/webscr?cmd=_s-xclick&hosted_button_id=8F2GZVBCVEDUQ).
+If you don't like Paypal (Paypal takes 2.9% plus $0.30 per transaction fee from your donation), please contact me.
+Please only use the link from github.com/uwolfer/gerrit-intellij-plugin to verify that it is correct.
 
-    http://res.cloudinary.com/demo/image/upload/w_150,h_100,c_fill/sample.jpg
 
-![Sample 150x100](https://res.cloudinary.com/demo/image/upload/w_150,h_100,c_fill/sample.jpg "Sample 150x100")
+Copyright and license
+--------------------
 
-Converting to a 150x100 PNG with rounded corners of 20 pixels:
+Copyright 2013 - 2018 Urs Wolfer
 
-    http://res.cloudinary.com/demo/image/upload/w_150,h_100,c_fill,r_20/sample.png
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this work except in compliance with the License.
+You may obtain a copy of the License in the LICENSE file, or at:
 
-![Sample 150x150 Rounded PNG](https://res.cloudinary.com/demo/image/upload/w_150,h_100,c_fill,r_20/sample.png "Sample 150x150 Rounded PNG")
+  [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-For plenty more transformation options, see our [image transformations documentation](http://cloudinary.com/documentation/image_transformations).
-
-Generating a 120x90 thumbnail based on automatic face detection of the Facebook profile picture of Bill Clinton:
-
-    http://res.cloudinary.com/demo/image/facebook/c_thumb,g_face,h_90,w_120/billclinton.jpg
-
-![Facebook 90x120](https://res.cloudinary.com/demo/image/facebook/c_thumb,g_face,h_90,w_120/billclinton.jpg "Facebook 90x200")
-
-For more details, see our documentation for embedding [Facebook](http://cloudinary.com/documentation/facebook_profile_pictures) and [Twitter](http://cloudinary.com/documentation/twitter_profile_pictures) profile pictures.
-
-
-## Usage
-
-### Configuration
-
-Each request for building a URL of a remote cloud resource must have the `cloud_name` parameter set. 
-Setting the `cloud_name` parameter can be done either when initializing the library, or by using the CLOUDINARY_URL meta-data property in `AndroidManifest.xml`.
-
-The entry point of the library is the `MediaManager` object. `MediaManager.init()` must be called before using the library, preferably in `Application.onCreate()`.
-Here's an example of setting the configuration parameters programmatically in your `Applicaion.onCreate(`:
-    
-     Map config = new HashMap();
-     config.put("cloud_name", "myCloudName");
-     MediaManager.init(this, config);
-    
-Alternatively, When using the meta-data property, no configuration is required:
-    
-    MediaManager.init(this);
-
-The added property `AndroidManifest.xml`. Note: You should only include the `cloud_name` in the value, the api secret and key should be left out of the application.
-
-    <manifest>
-        ...
-        <application>
-            ...
-            <meta-data android:name="CLOUDINARY_URL" android:value="cloudinary://@myCloudName"/>
-        </application>
-    <manifest>
-
-
-
-### Embedding and transforming images
-
-Any image uploaded to Cloudinary can be transformed and embedded using powerful view helper methods:
-
-The following example generates the url for accessing an uploaded `sample` image while transforming it to fill a 100x150 rectangle:
-
-    MediaManager.get().url().transformation(new Transformation().width(100).height(150).crop("fill")).generate("sample.jpg")
-
-Another example, embedding a smaller version of an uploaded image while generating a 90x90 face detection based thumbnail: 
-
-    MediaManager.get().url().transformation(new Transformation().width(90).height(90).crop("thumb").gravity("face")).generate("woman.jpg")
-
-You can provide either a Facebook name or a numeric ID of a Facebook profile or a fan page.  
-             
-Embedding a Facebook profile to match your graphic design is very simple:
-
-    MediaManager.get().url().type("facebook").transformation(new Transformation().width(130).height(130).crop("fill").gravity("north_west")).generate("billclinton.jpg")
-                           
-Same goes for Twitter:
-
-    MediaManager.get().url().type("twitter_name").generate("billclinton.jpg")
-
-### Uploading
-
-The entry point for upload operations is the `MediaManager.get().upload()` call. All upload operations are dispatched to a background queue, with 
-a set of fully customizable rules and limits letting you choose when each upload request should actually run. Requests are automatically rescheduled to be
-retried later if a recoverable error is encountered (e.g. network disconnections, timeouts).
-
-The upload results are dispatched asynchronously using `UploadCallback`. Global callbacks can be defined, as well as specific callbacks per request.
-Note: In order to receive global callbacks even when the app is already shut down, or in the background, the `ListenerService` class can be extended and registered in the manifest (see the class for further instructions). 
-
-The following examples uploads a `File`  using the default settings, a request upload callback, and an upload preset (more about upload presets below):
-    
-    String requestId = MediaManager.get().upload(imageFile).unsigned("sample_preset").callback(callback).dispatch();
-   
-The returned `requestId` is used to identify the request in global callbacks and to cancel the request if needed. The callback should be any implementation of `UploadCallback`.
-
-The uploaded image is assigned a randomly generated public Id. As soon as `onSuccess` is called, the image is immediately available for download through a CDN:
-
-    MediaManager.get().url().generate("abcfrmo8zul1mafopawefg.jpg")
-      
-    http://res.cloudinary.com/demo/image/upload/abcfrmo8zul1mafopawefg.jpg
-
-You can also specify your own public ID:
-    
-    String requestId = MediaManager.get().upload(uri).unsigned("sample_preset").option("public_id", "sample_remote").dispatch();
-
-Using `RequestUploadPolicy`, an upload request can be configured to run under specific circumstance, or within a chosen time window:
-
-The following examples uploads local Uri resource, configured to run immediately (the default), with a maximum of 7 retries, and only on an unmetered network (e.g. wifi):
-
-    String requestId = MediaManager.get().upload(uri)
-        .unsigned("sample_app_preset")
-        .constrain(TimeWindow.immediate())
-        .policy(new RequestUploadPolicy.Builder().maxRetries(7).networkPolicy(RequestUploadPolicy.NetworkType.UNMETERED).build())
-        .dispatch();
-
-For security reasons, mobile applications cannot contain the full account credentials, and so they cannot freely upload resources to the cloud.
-Cloudinary provides two different mechanisms to enable end-users to upload resources without providing full credentials.
-
-##### 1. Unsigned uploads using [Upload Presets.](http://cloudinary.com/blog/centralized_control_for_image_upload_image_size_format_thumbnail_generation_tagging_and_more) 
-You can create an upload preset in your Cloudinary account console, defining rules that limit the formats, transformations, dimensions and more.
-Once the preset is defined, it's name is supplied when calling upload. An upload call will only succeed if the preset name is used and the resource is within the preset's pre-defined limits.
-
-The following example uploads a local resource, available as a Uri, assuming a preset named 'sample_preset' already exists in the account:
-
-    String requestId = MediaManager.get().upload(uri).unsigned("sample_preset").dispatch();
-
-##### 2. Signed uploads with server-based signature
-Another way to allow uploading without credentials is using signed uploads. 
-It is recommended to generate the upload authentication signature on the server side, where it's safe to store the `api_secret`.
-
-Cloudinary's Android SDK allows providing server-generated signature and any additional parameters that were generated on the server side (instead of signing using `api_secret` locally).
-
-Your server can use any Cloudinary libraries (Ruby on Rails, PHP, Python & Django, Java, Perl, .Net, etc.) for generating the signature. The following JSON in an example of a response of an upload authorization request to your server:
-
-	{
-	  "signature": "sgjfdoigfjdgfdogidf9g87df98gfdb8f7d6gfdg7gfd8",
-	  "public_id": "abdbasdasda76asd7sa789",
-	  "timestamp": 1346925631,
-	  "api_key": "123456789012345"
-	}
-
-When initializing `MediaManager`, a `SignatureProvider` can be sent. Whenever an upload requires signing, the library will call the provider's `provideSignature()` method, 
-where you should implement the call to your server's signing endpoint. This callback runs on a background a thread so there's no need to handle threading:
-
-    MediaManager.init(this, new SignatureProvider() {
-        @Override
-        public Signature provideSignature(Map options) {
-            // call server signature endpoint
-        }
-    }, null);
-        
-
-## Additional resources ##########################################################
-
-Additional resources are available at:
-
-* [Website](http://cloudinary.com)
-* [Documentation](http://cloudinary.com/documentation)
-* [Image transformations documentation](http://cloudinary.com/documentation/image_transformations)
-* [Upload API documentation](http://cloudinary.com/documentation/upload_images)
-
-## Support
-
-You can [open an issue through GitHub](https://github.com/cloudinary/cloudinary_android/issues).
-
-Contact us at [support@cloudinary.com](mailto:support@cloudinary.com)
-
-Or via Twitter: [@cloudinary](https://twitter.com/#!/cloudinary)
-
-## Join the Community ##########################################################
-
-Impact the product, hear updates, test drive new features and more! Join [here](https://www.facebook.com/groups/CloudinaryCommunity).
-
-## License #######################################################################
-
-Released under the MIT license. 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
