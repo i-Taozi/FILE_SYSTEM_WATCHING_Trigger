@@ -1,4 +1,4 @@
+rootProject.name = 'jbake-base'
+include 'jbake-core'
+include 'jbake-dist'
 
-rootProject.name = 'jgeohash'
-include(':jgeohash-geoip')
-include(':jgeohash-core')

@@ -1,0 +1,6 @@
+nexusPublishing {
+    repositories {
+        sonatype()
+    }
+}
+
