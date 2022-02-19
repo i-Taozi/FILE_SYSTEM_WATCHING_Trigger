@@ -1,1 +1,1 @@
-include ':app'
+rootProject.name = 'ical4j'

@@ -1,15 +1,29 @@
-language: android
-jdk:
-  - oraclejdk8
+#before_cache:
+#  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+#  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    #- $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 sudo: false
-android:
-  components:
-  - tools
-  - platform-tools
-  - tools
-before_install:
-  - yes | sdkmanager "platforms;android-28"
+dist: bionic
+language: java
+jdk:
+  - oraclejdk9
+  - oraclejdk12
+  - openjdk8
+  - openjdk11
+services:
+  - docker
+#before_install:
+#  - etc/scripts/update-zoneinfo.sh
 script:
-- "cp apikey.properties.example apikey.properties"
-- "./gradlew build check --daemon"
-after_failure: "cat $TRAVIS_BUILD_DIR/app/build/outputs/lint-results-debug.xml"
+  - ./gradlew build jacocoTestReport
+after_success:
+  - bash $HOME/etc/codecov.sh
+deploy:
+  provider: script
+  script: ./gradlew -q -Prelease.customUsername=$GIT_USER -Prelease.customPassword=$GIT_PASSWORD -Prelease.disableChecks -Prelease.pushTagsOnly release && ./gradlew build publish
+  on:
+    branch: master
+    jdk: openjdk8

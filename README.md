@@ -1,443 +1,305 @@
-# RestClientTemplate [![Build Status](https://travis-ci.org/codepath/android-rest-client-template.svg?branch=master)](https://travis-ci.org/codepath/android-rest-client-template)
+# iCal4j - iCalendar parser and object model
 
-## Overview
+[RFC2445]: https://tools.ietf.org/html/rfc2445
+[RFC2446]: https://tools.ietf.org/html/rfc2446
+[RFC2447]: https://tools.ietf.org/html/rfc2447
 
-RestClientTemplate is a skeleton Android project that makes writing Android apps sourced from OAuth JSON REST APIs as easy as possible. This skeleton project
-combines the best libraries and structure to enable quick development of rich API clients. The following things are supported out of the box:
+[RFC5545]: https://tools.ietf.org/html/rfc5545
+[RFC5546]: https://tools.ietf.org/html/rfc5546
+[RFC6047]: https://datatracker.ietf.org/doc/html/rfc6047
+[RFC6868]: https://datatracker.ietf.org/doc/html/rfc6868
+[RFC7953]: https://datatracker.ietf.org/doc/html/rfc7953
+[RFC7986]: https://datatracker.ietf.org/doc/html/rfc7986
+[RFC7529]: https://datatracker.ietf.org/doc/html/rfc7529
+[RFC9073]: https://datatracker.ietf.org/doc/html/rfc9073
+[RFC9074]: https://datatracker.ietf.org/doc/html/rfc9074
 
- * Authenticating with any OAuth 1.0a or OAuth 2 API
- * Sending requests for and parsing JSON API data using a defined client
- * Persisting data to a local SQLite store through an ORM layer
- * Displaying and caching remote image data into views
+[Bintray Releases]: https://bintray.com/ical4j/maven/ical4j
 
-The following libraries are used to make this possible:
+[Introduction]: #introduction
 
- * [scribe-java](https://github.com/fernandezpablo85/scribe-java) - Simple OAuth library for handling the authentication flow.
- * [Android Async HTTP](https://github.com/codepath/AsyncHttpClient) - Simple asynchronous HTTP requests with JSON parsing
- * [codepath-oauth](https://github.com/thecodepath/android-oauth-handler) - Custom-built library for managing OAuth authentication and signing of requests
- * [Glide](https://github.com/bumptech/glide) - Used for async image loading and caching them in memory and on disk.
- * [Room](https://developer.android.com/training/data-storage/room/index.html) - Simple ORM for persisting a local SQLite database on the Android device
+[Setup]: #setup
+[System requirements]: #system-requirements
+[Release downloads]: #release-downloads
+[Install with Maven]: #install-with-maven
+[Install with Gradle]: #install-with-gradle
+
+[Usage]: #usage
+
+[Examples]: #examples
+
+[References]: #references
+[Specifications]: #specifications
+
+[Configuration]: #configuration
+[Compatibility Hints]: #compatibility-hints
+
+[Limitations]: #limitations
+
+[Development]: #development
+[Building with Gradle]: #building-with-gradle
+[Redistribution]: #redistribution
+[Contributing]: #contributing
+
+#### Table of Contents
+
+1. [Introduction - What is iCal4j?][Introduction]
+2. [Setup - Download and installation of iCal4j][Setup]
+    - [System requirements - What is required to use iCal4j][System requirements]
+    - [Release downloads - Where to get iCal4j][Release downloads]
+    - [Install with Maven]
+    - [Install with Gradle]
+3. [Usage - The iCal4j object model and how to use it][Usage]
+    - [Examples - common usage scenarios][Examples]
+4. [References][References]
+5. [Configuration options][Configuration]
+    - [Compatibility Hints]
+6. [Limitations - CUA compatibility, etc.][Limitations]
+7. [Development - Guide for contributing to the iCalj project][Development]
+    - [Building with Gradle]
+    - [Redistribution]
+    - [Contributing to iCal4j][Contributing]
+
+## Introduction
+
+iCal4j is a Java library used to read and write iCalendar data streams as defined in [RFC2445]. The iCalendar standard
+provides a common data format used to store information about calendar-specific data such as events, appointments, to-do
+lists, etc. All of the popular calendaring tools, such as Lotus Notes, Outlook and Apple's iCal also support the iCalendar
+standard.
+
+ - For a concise description of the goals and directions of iCal4j please
+ take a look at the [open issues](https://github.com/ical4j/ical4j/issues).
+
+ - You will find examples of how to use iCal4j in [the wiki](https://github.com/ical4j/ical4j/wiki)
+ and throughout the [API documentation](https://ical4j.github.io/docs/ical4j/api).
+
+ - Detailed descriptions of changes included in each release may be found
+ in the [CHANGELOG](https://ical4j.github.io/docs/ical4j/release-notes).
+ 
+ - iCal4j was created with the help of [Open Source](http://opensource.org) software.
+
+
+## Setup
+
+### System requirements
+
+ - Version 3.x - Java 8 or later
+ - Version 2.x - Java 7 or later
+
+### Dependencies
+
+In the interests of portability and compatibility with as many environments as possible, the number of dependent
+libraries for iCal4j is kept to a minimum. The following describes the required (and optional) dependencies and the
+functionality they provide.
+
+* slf4j-api [required] - A logging meta-library with integration to different logging framework implementations. Used in all classes that require logging.
+
+* commons-lang3 [required] - Provides enhancements to the standard Java library, including support for custom `equals()` and `hashcode()`
+implementations. Used in all classes requiring custom equality implementations.
+
+* commons-collections4 [required] - Provides enhancements to the standard Java collections API, including support for closures. Used in `net.fortuna.ical4j.validate.Validator` implementations to reduce the duplication of code in validity checks.
+
+* javax.cache.cache-api [optional*] - Supports caching timzeone definitions. * NOTE: when not included you must set
+a value for the `net.fortuna.ical4j.timezone.cache.impl` configuration
+
+* commons-codec [optional] - Provides support for encoding and decoding binary data in text form. Used in `net.fortuna.ical4j.model.property.Attach`
+ 
+* groovy-all [optional] - The runtime for the Groovy language. Required for library enhancements such as iCalendar object construction using
+the `net.fortuna.ical4j.model.ContentBuilder` DSL. This library is optional for all non-Groovy features of iCal4j.
+
+* bndlib [optional] - A tool for generating OSGi library metadata and packaging OSGi bundles. This library is not a runtime requirement, and
+is used only to generate version information in the javadoc API documentation.
+ 
+
+### Release Downloads
+
+* [Bintray Releases]
+
+### Install with Maven
+
+### Install with Gradle
+
 
 ## Usage
 
-### 1. Configure the REST client
+### Examples
 
-Open `src/com.codepath.apps.restclienttemplate/RestClient.java`. Configure the `REST_API_INSTANCE` and`REST_URL`.
+
+## References
+
+* [RFC5545] - Internet Calendaring and Scheduling Core Object Specification (iCalendar)
+* [RFC5546] - iCalendar Transport-Independent Interoperability Protocol (iTIP)
+* [RFC6047] - iCalendar Message-Based Interoperability Protocol (iMIP)
+* [RFC6868] - Parameter Value Encoding in iCalendar and vCard
+* [RFC7953] - Calendar Availability
+* [RFC7986] - New Properties for iCalendar
+* [RFC7529] - Non-Gregorian Recurrence Rules in iCalendar
+* [RFC9073] - Event Publishing Extensions to iCalendar
+* [RFC9074] - "VALARM" Extensions for iCalendar
+
+
+## Configuration
+
+    net.fortuna.ical4j.parser=net.fortuna.ical4j.data.HCalendarParserFactory
+
+    net.fortuna.ical4j.timezone.registry=net.fortuna.ical4j.model.DefaultTimeZoneRegistryFactory
+
+    net.fortuna.ical4j.timezone.update.enabled={true|false}
+
+    net.fortuna.ical4j.factory.decoder=net.fortuna.ical4j.util.DefaultDecoderFactory
+
+    net.fortuna.ical4j.factory.encoder=net.fortuna.ical4j.util.DefaultEncoderFactory
+
+    net.fortuna.ical4j.recur.maxincrementcount=1000
+    
+    net.fortuna.ical4j.timezone.cache.impl=net.fortuna.ical4j.util.MapTimeZoneCache
+
+
+### Compatibility Hints
  
-For example if I wanted to connect to Twitter:
-
-```java
-// RestClient.java
-public class RestClient extends OAuthBaseClient {
-    public static final BaseApi REST_API_INSTANCE = TwitterApi.instance();
-    public static final String REST_URL = "https://api.twitter.com/1.1";
-    public static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;       // Change this inside apikey.properties
-    public static final String REST_CONSUMER_SECRET = BuildConfig.CONSUMER_SECRET; // Change this inside apikey.properties
-    // ...constructor and endpoints
-}
-```
-
-Rename the `apikey.properties.example` file to `apikey.properties`.   Replace the `CONSUMER_KEY` and `CONSUMER_SECRET` to the values specified in the Twitter console:
-
-CONSUMER_KEY="adsflfajsdlfdsajlafdsjl"
-CONSUMER_SECRET="afdsljkasdflkjsd"
-
-Next, change the `intent_scheme` and `intent_host` in `strings.xml` to a unique name that is special for this application.
-This is used for the OAuth authentication flow for launching the app through web pages through an [Android intent](https://developer.chrome.com/multidevice/android/intents).
-
-```xml
-<string name="intent_scheme">oauth</string>
-<string name="intent_host">codepathtweets</string>
-```
-
-Next, you want to define the endpoints which you want to retrieve data from or send data to within your client:
-
-```java
-// RestClient.java
-public void getHomeTimeline(int page, JsonHttpResponseHandler handler) {
-  String apiUrl = getApiUrl("statuses/home_timeline.json");
-  RequestParams params = new RequestParams();
-  params.put("page", String.valueOf(page));
-  getClient().get(apiUrl, params, handler);
-}
-```
-
-Note we are using `getApiUrl` to get the full URL from the relative fragment and `RequestParams` to control the request parameters.
-You can easily send post requests (or put or delete) using a similar approach:
-
-```java
-// RestClient.java
-public void postTweet(String body, JsonHttpResponseHandler handler) {
-    String apiUrl = getApiUrl("statuses/update.json");
-    RequestParams params = new RequestParams();
-    params.put("status", body);
-    getClient().post(apiUrl, params, handler);
-}
-```
-
-These endpoint methods will automatically execute asynchronous requests signed with the authenticated access token. To use JSON endpoints, simply invoke the method
-with a `JsonHttpResponseHandler` handler:
-
-```java
-// SomeActivity.java
-RestClient client = RestApplication.getRestClient();
-client.getHomeTimeline(1, new JsonHttpResponseHandler() {
-    @Override
-    public void onSuccess(int statusCode, Headers headers, JSON json) {
-    // json.jsonArray.getJSONObject(0).getLong("id");
-  }
-});
-```
-
-Based on the JSON response (array or object), you need to declare the expected type inside the OnSuccess signature i.e
-`public void onSuccess(JSONObject json)`. If the endpoint does not return JSON, then you can use the `AsyncHttpResponseHandler`:
-
-```java
-RestClient client = RestApplication.getRestClient();
-client.getSomething(new JsonHttpResponseHandler() {
-    @Override
-    public void onSuccess(int statusCode, Headers headers, String response) {
-        System.out.println(response);
-    }
-});
-```
-Check out [Android Async HTTP Docs](https://github.com/codepath/AsyncHttpClient) for more request creation details.
-
-### 2. Define the Models
-
-In the `src/com.codepath.apps.restclienttemplate.models`, create the models that represent the key data to be parsed and persisted within your application.
-
-For example, if you were connecting to Twitter, you would want a Tweet model as follows:
-
-```java
-// models/Tweet.java
-package com.codepath.apps.restclienttemplate.models;
-
-import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
-
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-@Entity
-public class Tweet {
-  // Define database columns and associated fields
-  @PrimaryKey
-  @ColumnInfo
-  Long id;
-  @ColumnInfo
-  String userHandle;
-  @ColumnInfo
-  String timestamp;
-  @ColumnInfo
-  String body;
-
-  // Use @Embedded to keep the column entries as part of the same table while still
-  // keeping the logical separation between the two objects.
-  @Embedded
-  User user;
-}
-```
-
-Note there is a separate `User` object but it will not actually be declared as a separate table.  By using the `@Embedded` annotation, the fields in this class will be stored as part of the Tweet table.  Room specifically does not load references between two different entities for performance reasons (see https://developer.android.com/training/data-storage/room/referencing-data), so declaring it this way causes the data to be denormalized as one table.
-
-```java
-// models/User.java
-
-public class User {
-
-    @ColumnInfo
-    String name;
-
-    // normally this field would be annotated @PrimaryKey because this is an embedded object
-    // it is not needed
-    @ColumnInfo  
-    Long twitter_id;
-}
-```
-Notice here we specify the SQLite table for a resource, the columns for that table, and a constructor for turning the JSON object fetched from the API into this object. For more information on creating a model, check out the [Room guide](https://developer.android.com/training/data-storage/room/).
-
-In addition, we also add functions into the model to support parsing JSON attributes in order to instantiate the model based on API data.  For the User object, the parsing logic would be:
-
-```java
-// Parse model from JSON
-public static User parseJSON(JSONObject tweetJson) {
-
-    User user = new User();
-    this.twitter_id = tweetJson.getLong("id");
-    this.name = tweetJson.getString("name");
-    return user;
-}
-```
-
-For the Tweet object, the logic would would be:
-
-```java
-// models/Tweet.java
-@Entity
-public class Tweet {
-  // ...existing code from above...
-
-  // Add a constructor that creates an object from the JSON response
-  public Tweet(JSONObject object){
-    try {
-      this.user = User.parseJSON(object.getJSONObject("user"));
-      this.userHandle = object.getString("user_username");
-      this.timestamp = object.getString("timestamp");
-      this.body = object.getString("body");
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static ArrayList<Tweet> fromJson(JSONArray jsonArray) {
-    ArrayList<Tweet> tweets = new ArrayList<Tweet>(jsonArray.length());
-
-    for (int i=0; i < jsonArray.length(); i++) {
-        JSONObject tweetJson = null;
-        try {
-            tweetJson = jsonArray.getJSONObject(i);
-        } catch (Exception e) {
-            e.printStackTrace();
-            continue;
-        }
-
-        Tweet tweet = new Tweet(tweetJson);
-        tweets.add(tweet);
-    }
+#### Relaxed Parsing
+    
+    ical4j.parsing.relaxed={true|false}
+
+ iCal4j now has the capability to "relax" its parsing rules to enable parsing of
+ *.ics files that don't properly conform to the iCalendar specification (RFC2445)
+ 
+ This property is intended as a general relaxation of parsing rules to allow for parsing
+ otherwise invalid calendar files. Initially enabling this property will allow for the
+ creation of properties and components with illegal names (e.g. Mozilla Calendar's "X"
+ property). Note that although this will allow for parsing calendars with illegal names,
+ validation will still identify such names as an error in the calendar model.
+ 
+ - You can relax iCal4j's unfolding rules by specifying the following system property:
+    
+        ical4j.unfolding.relaxed={true|false}
+ 
+ Note that I believe this problem is not restricted to Mozilla calendaring
+ products, but rather may be caused by UNIX/Linux-based applications relying on the
+ default newline character (LF) to fold long lines (KOrganizer also seems to have this
+ problem). This is, however, still incorrect as by definition long lines are folded
+ using a (CRLF) combination.
+ 
+ I've obtained a couple of samples of non-standard iCalendar files that I've included
+ in the latest release (0.9.11). There is a Sunbird, phpicalendar, and a KOrganizer
+ sample there (open them in Notepad on Windows to see what I mean).
+
+ It seems that phpicalendar and KOrganizer always use LF instead of CRLF, and in
+ addition KOrganizer seems to fold all property parameters and values (similar to
+ Mozilla Calendar/Sunbird).
+
+ Mozilla Calendar/Sunbird uses CRLF to fold all property parameter/values, however it
+ uses just LF to fold long lines (i.e. longer than 75 characters).
+
+ The latest release of iCal4j includes changes to UnfoldingReader that should work
+ correctly with Mozilla Calendar/Sunbird, as long as the ical4j.unfolding.relaxed
+ system property is set to true.
+
+ KOrganizer/phpicalendar files should also work with the relaxed property, although
+ because ALL lines are separated with just LF it also relies on the StreamTokenizer to
+ correctly identify LF as a newline on Windows, and CRLF as a newline on UNIX/Linux. The
+ API documentation for Java 1.5 says that it does do this, so if you still see problems
+ with parsing it could be a bug in the Java implementation.
+
+ 
+ The full set of system properties may be found in
+ net.fortuna.ical4j.util.CompatibilityHints.
+
+
+#### iCal4j and Timezones
+
+    net.fortuna.ical4j.timezone.date.floating={true|false}
+
+ Supporting timezones in an iCalendar implementation can be a complicated process,
+ mostly due to the fact that there is not a definitive list of timezone definitions
+ used by all iCalendar implementations. This means that an iCalendar file may be
+ produced by one implementation and, if the file does not include all definitions
+ for timezones relevant to the calendar properties, an alternate implementation
+ may not know how to interpret the timezone identified in the calendar (or worse,
+ it may interpret the timezone differently to the original implementation). All
+ of these possibilities mean unpredictable behaviour which, to put it nicely, is
+ not desireable.
+ 
+ iCal4j approaches the problem of timezones in two ways: The first and by far the
+ preferred approach is for iCalendar files to include definitions for all timezones
+ referenced in the calendar object. To support this, when an existing calendar is
+ parsed a list of VTimeZone definitions contained in the calendar is constructed.
+ This list may then be queried whenever a VTimeZone definition is required.
+ 
+ The second approach is to rely on a registry of VTimeZone definitions. iCal4j
+ includes a default registry of timezone definitions (derived from the Olson timezone
+ database - a defacto standard for timezone definitions), or you may also provide your
+ own registry implementation from which to retreieve timezones. This approach is
+ required when constructing new iCalendar files.
+ 
+ Note that the intention of the iCal4j model is not to provide continuous validation
+ feedback for every change in the model. For this reason you are free to change
+ timezones on Time objects, remove or add TzId parameters, remove or add VTimeZone
+ definitions, etc. without restriction. However when validation is run (automatically
+ on output of the calendar) you will be notified if the changes are invalid.
+
+#### Validation
+    
+    ical4j.validation.relaxed={true|false}
+
+
+#### Micosoft Outlook compatibility
+    
+    ical4j.compatibility.outlook={true|false}
+
+Behaviour:
+
+* Enforces a folding length of 75 characters (by default ical4j will fold at 73 characters)
+* Allows for spaces when parsing a WEEKDAY list
+
+Microsoft Outlook also appears to provide quoted TZID parameter values, as follows:
+ 
+    DTSTART;TZID="Pacific Time (US & Canada),Tijuana":20041011T223000
+
+#### Lotus Notes compatibility
+
+    ical4j.compatibility.notes={true|false}
+ 
 
-    return tweets;
-  }
-}
-```
-
-
-Now you have a model that supports proper creation based on JSON. Create models for all the resources necessary for your mobile client.
-
-### 4. Define your queries
-
-Next, you will need to define the queries by creating a Data Access Object (DAO) class.   Here is an example of declaring queries to return a Tweet by the post ID, retrieve the most recent tweets, and insert tweets.   
-
-```java
-
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-
-import java.util.List;
-
-@Dao
-public interface TwitterDao {
-    // Record finders
-    @Query("SELECT * FROM Tweet WHERE post_id = :tweetId")
-    Tweet byTweetId(Long tweetId);
-
-    @Query("SELECT * FROM Tweet ORDER BY created_at")
-    List<Tweet> getRecentTweets();
-
-    // Replace strategy is needed to ensure an update on the table row.  Otherwise the insertion will
-    // fail.
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertTweet(Tweet... tweets);
-}
-```
-
-The examples here show how to perform basic queries on the Tweet table.  If you need to declare one-to-many or many-to-many relations, see the guides on using the [@Relation](https://developer.android.com/reference/android/arch/persistence/room/Relation) and [@ForeignKey](https://developer.android.com/reference/android/arch/persistence/room/ForeignKey) annotations.
-
-### 5. Create database
-
-We need to define a database that extends `RoomDatabase` and describe which entities as part of this database. We also need to include what data access objects are to be included.  If the entities are modified or additional ones are included, the version number will need to be changed.  Note that only the `Tweet` class is declared:
-
-```java
-// bump version number if your schema changes
-@Database(entities={Tweet.class}, version=1)
-public abstract class MyDatabase extends RoomDatabase {
-  // Declare your data access objects as abstract
-  public abstract TwitterDao twitterDao();
-
-  // Database name to be used
-  public static final String NAME = "MyDataBase";
-
-```    
-
-When compiling the code, the schemas will be stored in a `schemas/` directory assuming this statement
-has been included your `app/build.gradle` file.  These schemas should be checked into your code based.
-
-```gradle
-android {
-    defaultConfig {
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-    }
-
-}
-```
+## Limitations
 
-### 6. Initialize database
 
-Inside your application class, you will need to initialize the database and specify a name for it.
+ 
+## Development
 
-```java
-public class RestClientApp extends Application {
+### Building with Gradle
 
-  MyDatabase myDatabase;
+iCal4j includes the Gradle wrapper for a simpler and more consistent build.
 
-  @Override
-  public void onCreate() {
-    // when upgrading versions, kill the original tables by using fallbackToDestructiveMigration()
-    myDatabase = Room.databaseBuilder(this, MyDatabase.class, MyDatabase.NAME).fallbackToDestructiveMigration().build();
-  }
+**Run unit tests**
 
-  public MyDatabase getMyDatabase() {
-    return myDatabase;
-  }
+    ./gradlew clean test
 
-}
-```
+**Build a new release**
 
-### 7. Setup Your Authenticated Activities
+    ./gradlew clean test release -Prelease.forceVersion=2.0.0
 
-Open `src/com.codepath.apps.restclienttemplate/LoginActivity.java` and configure the `onLoginSuccess` method
-which fires once your app has access to the authenticated API. Launch an activity and begin using your REST client:
+**Upload release binaries and packages**
 
-```java
-// LoginActivity.java
-@Override
-public void onLoginSuccess() {
-  Intent i = new Intent(this, TimelineActivity.class);
-  startActivity(i);
-}
-```
+    RELEASE_VERSION=2.0.0 ./gradlew uploadArchives uploadDist
 
-In your new authenticated activity, you can access your client anywhere with:
+### Redistribution
 
-```java
-RestClient client = RestApplication.getRestClient();
-client.getHomeTimeline(1, new JsonHttpResponseHandler() {
-  public void onSuccess(int statusCode, Headers headers, JSON json) {
-    Log.d("DEBUG", "timeline: " + json.jsonArray.toString());
-    // Load json array into model classes
-  }
-});
-```
+If you intend to use and distribute iCal4j in your own project please
+follow these very simple guidelines:
+ 
+ - Make a copy of the LICENSE, rename it to LICENSE.ical4j, and save
+ it to the directory where you are re-distributing the iCal4j JAR.
+ 
+ - I don't recommend extracting the iCal4j classes from its JAR and package
+ in another JAR along with other classes. It may lead to version incompatibilites
+ in the future. Rather I would suggest to include the ical4j.jar in your classpath
+ as required.
 
-You can then load the data into your models from a `JSONArray` using:
+### Contributing
 
-```java
-ArrayList<Tweet> tweets = Tweet.fromJSON(jsonArray);
-```
+Open source software is made stronger by the community that supports it. Through participation you not only contribute to the quality of the software, but also gain a deeper insight into the inner workings.
 
-or load the data from a single `JSONObject` with:
+Contributions may be in the form of feature enhancements, bug fixes, test cases, documentation and forum participation. If you have a question, just ask. If you have an answer, write it down.
 
-```java
-Tweet t = new Tweet(json);
-// t.body = "foo"
-```
-
-To save, you will need to perform the database operation on a separate thread by creating an `AsyncTask` and adding the item:
-
-```java
-AsyncTask<Tweet, Void, Void> task = new AsyncTask<Tweet, Void, Void>() {
-    @Override
-    protected Void doInBackground(Tweet... tweets) {
-      TwitterDao twitterDao = ((RestApplication) getApplicationContext()).getMyDatabase().twitterDao();
-      twitterDao.insertModel(tweets);
-      return null;
-    };
-  };
-  task.execute(tweets);
-```
-
-That's all you need to get started. From here, hook up your activities and their behavior, adjust your models and add more REST endpoints.
-
-### Extras
-
-#### Loading Images with Glide
-
-If you want to load a remote image url into a particular ImageView, you can use Glide to do that with:
-
-```java
-Glide.with(this).load(imageUrl)
-     .into(imageView);
-```
-
-This will load an image into the specified ImageView and resize the image to fit.
-
-#### Logging Out
-
-You can log out by clearing the access token at any time through the client object:
-
-```java
-RestClient client = RestApplication.getRestClient();
-client.clearAccessToken();
-```
-
-### Viewing SQL table
-
-You can use `chrome://inspect` to view the SQL tables once the app is running on your emulator.  See [this guide](https://guides.codepath.com/android/Debugging-with-Stetho) for more details.
-
-### Adding OAuth2 support
-
-Google uses OAuth2 APIs so make sure to use the `GoogleApi20` instance:
-
-```java
-public static final BaseApi REST_API_INSTANCE = GoogleApi20.instance();
-```
-
-Change `REST_URL` to use the Google API:
-
-```java
-public static final String REST_URL = "https://www.googleapis.com/calendar/v3"; // Change this, base API URL
-```
-
-The consumer and secret keys should be retrieved via [the credentials section](https://console.developers.google.com/apis/credentials) in the Google developer console  You will need to create an OAuth2 client ID and client secret.
-
-Create a file called `apikey.properties`: 
-
-```java
-REST_CONSUMER_KEY="XXX-XXX.apps.googleusercontent.com"
-REST_CONSUMER_SECRET="XX-XXXXXXX"
-```
-
-The OAuth2 scopes should be used according to the ones defined in [the OAuth2 scopes](https://developers.google.com/identity/protocols/googlescopes):
-
-```java
-public static final String OAUTH2_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
-```
-
-Make sure to pass this value into the scope parameter:
-
-```java
-public RestClient(Context context) {
-		super(context, REST_API_INSTANCE,
-				REST_URL,
-				REST_CONSUMER_KEY,
-				REST_CONSUMER_SECRET,
-				OAUTH2_SCOPE,  // OAuth2 scope, null for OAuth1
-				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
-						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
-	}
-```
-Google only accepts `http://` or `https://` domains, so your `REST_CALLBACK_URL_TEMPLATE` will need to be adjusted:
-
-```java
-public static final String REST_CALLBACK_URL_TEMPLATE = "https://localhost";
-```
-
-Make sure to update the `cprest` and `intent_host` to match this callback URL . 
-
-### Troubleshooting
-
-* If you receive the following error `org.scribe.exceptions.OAuthException: Cannot send unauthenticated requests for TwitterApi client. Please attach an access token!` then check the following:
- * Is your intent-filter with `<data>` attached to the `LoginActivity`? If not, make sure that the `LoginActivity` receives the request after OAuth authorization.
- * Is the `onLoginSuccess` method being executed in the `LoginActivity`. On launch of your app, be sure to start the app on the LoginActivity so authentication routines execute on launch and take you to the authenticated activity.
- * If you are plan to test with Android API 24 or above, you will need to use Chrome to launch the OAuth flow.  
- * Note that the emulators (both the Google-provided x86 and Genymotion versions) for API 24+ versions can introduce intermittent issues when initiating the OAuth flow for the first time.  For best results, use an device for this project.
+And if you are somehow constrained from participation, through corporate policy or otherwise, consider financial support. After all, if you are profiting from open source it's only fair to give something back to the community that make it all possible.
