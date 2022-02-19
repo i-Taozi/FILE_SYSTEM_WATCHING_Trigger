@@ -1,370 +1,188 @@
-JFreeSane: A SANE client for Java
-=================================
-[![Build Status](https://travis-ci.org/sjamesr/jfreesane.svg?branch=master)](https://travis-ci.org/sjamesr/jfreesane)
-[![Coverage Status](https://coveralls.io/repos/github/sjamesr/jfreesane/badge.svg?branch=master)](https://coveralls.io/github/sjamesr/jfreesane?branch=master)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.googlecode.jfreesane/jfreesane/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.googlecode.jfreesane/jfreesane)
-[![Gitter](https://badges.gitter.im/sjamesr/jfreesane.svg)](https://gitter.im/sjamesr/jfreesane)
-
-JFreeSane is a pure-Java implementation of a SANE client. See [the SANE project
-page](http://www.sane-project.org/) for more information about SANE itself.
-
-- [Introduction](#introduction)
-- [Getting JFreeSane](#getting-jfreesane)
-- [Limitations](#limitations)
-- [Please contribute](#please-contribute)
-- [Usage](#usage)
-    - [Connecting to SANE](#connecting-to-sane)
-    - [Obtaining a device handle](#obtaining-a-device-handle)
-    - [Listing known devices](#listing-known-devices)
-    - [Opening the device](#opening-the-device)
-    - [Acquiring an image](#acquiring-an-image)
-    - [Device options](#device-options)
-        - [Setting options](#setting-options)
-        - [Reading options](#reading-options)
-        - [Option getters and setters](#option-getters-and-setters)
-    - [Reading from an automatic document feeder](#reading-from-an-automatic-document-feeder)
-    - [Authentication](#authentication)
-    - [Listening to events](#listening-to-events)
-
-# Introduction
-
-The purpose of this library is to provide a client to the Scanner Access Now Easy (SANE) daemon.
-This allows Java programmers to obtain images from SANE image sources over a network.
-
-For example, you can do the following:
-
-```java
-SaneSession session = SaneSession.withRemoteSane(
-    InetAddress.getByName("my-sane-server.intranet"));
-List<SaneDevice> devices = session.listDevices();
-SaneDevice device = ...;  // determine which device you want to use
-device.open();
-
-BufferedImage image = device.acquireImage();  // scan an image
-```
-
-# Getting JFreeSane
-
-The easiest way to get this software is using [Maven](http://maven.apache.org/). Put the following in your `pom.xml`:
-
-```xml
-<project>
-  ...
-  <dependencies>
-     ...
-     <dependency>
-       <groupId>com.googlecode.jfreesane</groupId>
-       <artifactId>jfreesane</artifactId>
-       <version>1.0</version>
-     </dependency>
-   </dependencies>
-</project>
-```
-
-Otherwise, you can [download the jar file](https://github.com/sjamesr/jfreesane/releases/tag/jfreesane-1.0)
-and put it in your project's CLASSPATH.
-
-Once JFreeSane is available on your classpath, please read on for a tutorial on how to use it.
-
-Also consider joining the
-[jfreesane-discuss](http://groups.google.com/group/jfreesane-discuss) mailing list.
-It is a low-volume list where people can discuss JFreeSane, release announcements are
-made and issues are reported.
-
-# Limitations
-
-* JFreeSane must be used with a running SANE daemon. It will not run SANE for you.
-It cannot talk to your scanners without a SANE daemon.
-
-# Please contribute
-
-If you've been looking for a Java SANE client and you're familiar with SANE, please
-consider contributing documentation or patches.
-
-If you want to contribute back to JFreeSane, please consider [forking](https://help.github.com/articles/fork-a-repo)
-the project. Once you have some code you'd like to contribute,
-[submit a pull request](https://help.github.com/articles/using-pull-requests). We really appreciate contributions
-and we'll get it checked in as fast as possible.
-
-You can also get in touch via [jfreesane-discuss](http://groups.google.com/group/jfreesane-discuss) or 
-[Gitter](https://gitter.im/sjamesr/jfreesane).
-
-# Usage
-
-Here are some ways you can use JFreeSane.
-
-## Connecting to SANE
-
-JFreeSane is strictly a client of the [SANE](http://www.sane-project.org/) network daemon.
-You must have a SANE daemon running first before you can do anything with JFreeSane.
-Discussing how to set up a SANE daemon is beyond the scope of this document, please refer to the [SANE home page](http://www.sane-project.org/) for guidance.
-
-Once you have the daemon running on some host, for example `saneserver.mydomain.com`, you
-can start a SANE session with the following:
-
-```java
-import au.com.southsky.jfreesane.SaneSession;
-
-InetAddress address = InetAddress.getByName("saneserver.mydomain.com");
-SaneSession session = SaneSession.withRemoteSane(address);
-```
-
-Now you need to obtain a device handle.
-
-## Obtaining a device handle
-
-If you already know the name of the SANE device, you can open it directly by name. For
-example, SANE servers usually have (but do not advertise) a device whose name is "test".
-This is a "pseudo" device, in that it does not represent any physical hardware. It is
-useful for exercising JFreeSane.
-
-```java
-// Open the test device by name
-SaneSession session = ...;
-SaneDevice device = session.getDevice("test");
-```
-
-## Listing known devices
-
-If you do not know the device name, you can list devices known to the SANE server using the following:
-
-```java
-SaneSession session = ...;
-List<SaneDevice> devices = session.listDevices();
-```
-
-## Opening the device
-
-Most likely, you now want to interact with the scanning device. Before you do anything, you need to "`open`" the device.
-
-```java
-SaneDevice device = ...;
-device.open();
-```
-
-The device is now open. You can now get and set options and acquire images.
-
-## Acquiring an image
-
-Now you're ready to acquire an image from the scanner. Call `acquireImage`:
-
-```java
-SaneDevice device = ...;
-device.open();
-BufferedImage image = device.acquireImage();
-```
-
-If the default options are not sufficient, see the "Device options" section below.
-
-## Device options
-
-Each device has a set of parameters that control aspects of that device's operation.
-There are a handful of SANE 
-[built-in options](http://www.sane-project.org/html/doc014.html):
-
-  * scan resolution
-  * preview mode
-  * scan area
-
-Different scanners have different capabilities (for example, duplex scan, color, various
-document sources). Each scanner type will expose a set of options in addition to the ones
-described above.
-
-In order to see what options are supported by a device:
-
-```java
-SaneDevice device = ...;
-device.open();
-List<SaneOption> options = device.listOptions();
-```
-
-Each option has
-
-  * a name, used as an identifier by JFreeSane (e.g. mode)
-  * a title, in English, suitable for display to the user (e.g. Scan Mode)
-  * description, a brief description of the purpose of the option
-
-### Setting options
-
-You can set the value of an option, so long as 
-`SaneOption.isActive()` and `SaneOption.isWriteable` are both true. For example, the
-"source" option's value can be set by the following:
-
-```java
-SaneOption option = device.getOption("source");
-option.setStringValue("Auto Document Feeder");
-```
-
-The string "Auto Document Feeder" may not be correct for your particular device.
-In fact, valid option values differ from device to device. In this case, you may
-need to ask SANE what values are valid for a given option.
-
-```java
-SaneOption option = device.getOption("source");
-List<String> validValues = option.getStringConstraints();
-```
-
-`validValues` now contains a list of strings, each of which is a valid value for this
-option.
-
-There are some options whose valid values are in some range. For example, the "pixma"
-backend has an option called "tl-x" (the x-ordinate of the top left of the scan area).
-Its valid values are in the range 0 to 216.069 millimeters.
-To determine this programmatically:
-
-```java
-SaneOption option = device.getOption("tl-x");
-assert option.isConstrained() 
-    && option.getConstraintType() == OptionValueConstraintType.RANGE_CONSTRAINT;
-RangeConstraint constraint = option.getRangeConstraint();
-
-// this option is in mm, which is a fractional value. SANE uses fixed-point arithmetic,
-// so JFreeSane calls this a value of type "FIXED"
-assert option.getType() == OptionValueType.FIXED;
-assert option.getUnits() == SaneOption.OptionUnits.UNITS_MM;
-
-double min = constraint.getMinimumFixed();
-double max = constraint.getMaximumFixed();
-```
-
-To set the value of the "tl-x" option, you can do the following:
-
-```java
-SaneOption option = device.getOption("tl-x");
-double actualValue = option.setFixedValue(97.5);
-```
-
-JFreeSane will return the value actually set by the backend. For example, the valid
-values for "tl-x" are 0 to 216.069 (see the preceding section to see how this can be
-determined programmatically). If you set the value to something out of range, SANE will
-clamp the value to something in the valid range.
-
-```java
-SaneOption option = device.getOption("tl-x");
-double actualValue = option.setFixedValue(-4);
-// actualValue will be set to 0, the minimum value for this option
-```
-
-### Reading options
-
-The methods for reading option values depend on the option's type. Options are readable
-only if `isActive()` and `isReadable()` are true for the option. See the table in the
-following section for the list of option accessors.
-
-### Option getters and setters
-
-The following table lists the `SaneOption` methods for reading and writing options of a given type:
-
-| *`SaneOption.getType()`* | *Getter* | *Setter* |
-|--------------------------|----------|----------|
-| `BOOLEAN` | `getBooleanValue` | `setBooleanValue` |
-| `INT` | `getIntegerValue` | `setIntegerValue` |
-| `FIXED` | `getFixedValue` | `setFixedValue` |
-| `STRING` | `getStringValue` | `setStringValue` |
-| `BUTTON` | None | `setButtonValue` |
-| `GROUP` | None | None |
-
-Additionally, `INT`- and `FIXED`-type options may actually be an array of `INT` or
-`FIXED`. You can always use `SaneOption.getValueCount` to know for sure. 
-If the result is more than 1, you have an array.
-
-  * `getIntegerArrayValue` reads an INT array, `setIntegerValue(List<Integer>)` writes one
-  * `getFixedArrayValue` reads a FIXED array, `setFixedValue(List<Double>)` writes one
-
-## Reading from an automatic document feeder
-
-You may have a scanner with an Automatic Document Feeder (ADF). In this case, you may
-want to acquire all the images until the ADF is out of paper. Use the following technique:
-
-```java
-SaneDevice device = ...;
-
-// this value is device-dependent. See the section on "Setting Options" to find out
-// how to enumerate the valid values
-device.getOption("source").setStringValue("Automatic Document Feeder");
-
-while (true) {
-  try {
-    BufferedImage image = device.acquireImage();
-    process(image);
-  } catch (SaneException e) {
-    if (e.getStatus() == SaneStatus.STATUS_NO_DOCS) {
-      // this is the out of paper condition that we expect
-      break;
-    } else {
-      // some other exception that was not expected
-      throw e;
-    }
-  }
-}
-```
-
-## Authentication
-
-Thanks to generous contributions from Paul and Matthias, JFreeSane now supports connecting to authenticated resources.
-
-By default, JFreeSane will use SANE-style authentication as documented in
-[the `scanimage(1)` man page](http://www.sane-project.org/man/scanimage.1.html). If you want to implement
-an alternative method of supplying usernames and passwords, see the javadoc for `SaneSession.setPasswordProvider`.
-
-## Listening to events
-
-As of JFreeSane 0.93, you can now receive feedback when various scan events occur. For example, you can use
-a `ScanListener` to provide scan progress information to the user. In the following example, a Swing progress bar
-is updated as the scan proceeds.
-
-```java
-SaneDevice device = ...;
-final JProgressBar progressBar = new JProgressBar();
-progressBar.setStringPainted(true);
-progressbar.setString("Starting scan...");
-
-ScanListener progressBarUpdater = new ScanListenerAdapter() {
-  @Override public void recordRead(
-      SaneDevice device,
-      final int totalBytesRead,
-      final int imageSize) {
-    final double fraction = 1.0 * totalBytesRead / imageSize;
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override public void run() {
-        progressBar.setValue((int) (fraction * 100));
-        progressBar.setString(
-            String.format("Read %d of %d bytes (%.2f%%)",
-              totalBytesRead, imageSize, fraction));
-      }
-    });
-  }
-
-  @Override public void scanningFinished(SaneDevice device) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override public void run() {
-        progressBar.setValue(100);
-        progressBar.setString("Scanning completed!");
-      }
-    });
-  }
-};
-
-// JFreeSane can generate recordRead events at a high rate. We don't really
-// need more than a few of these per second, otherwise we spend too much
-// time updating the UI and not enough time scanning. Use the
-// RateLimitingScanListeners class to get a wrapper around our existing
-// listener that delivers messages at an acceptable rate (10 per second max).
-ScanListener rateLimitedListener = RateLimitedScanListeners.noMoreFrequentlyThan(
-    progressBarUpdater, 100, TimeUnit.MILLISECONDS);
-  
-BufferedImage image = device.acquireImage(rateLimitedListener);
-```
-
-In some cases, JFreeSane cannot know the eventual size of the image. In this case, the `imageSize`
-parameter of `recordRead` will be set to `-1`. Examples of this situation are:
-
-* when using a handheld scanner
-* when using a scanning driver that supports page height detection (that is, scanning stops only
-when the scanner detects the end of the page)
-
-Also, if you are using an old three-pass scanner (where one pass is made for each of three color
-bands), you will want to listen to the `frameAcquisitionStarted` message. JFreeSane will try to
-guess how many frames will eventually be sent and which frame it is currently acquiring.
-
-See the javadoc for `ScanListener` for more details.
+[![Build Status](https://travis-ci.org/sitewhere/sitewhere.svg?branch=master)](https://travis-ci.org/sitewhere/sitewhere) 
+[![Docker Pulls](https://img.shields.io/docker/pulls/sitewhere/service-web-rest.svg?label=Docker%20Pulls&style=flat-square)](https://hub.docker.com/u/sitewhere) 
+
+![SiteWhere](https://s3.amazonaws.com/sitewhere-branding/SiteWhereLogo.svg)
+
+---
+
+SiteWhere is an industrial strength, open source IoT Application Enablement Platform 
+which facilitates the ingestion, storage, processing, and integration of IoT device data 
+at massive scale. The platform leverages a microservices architecture which runs on top of 
+cutting-edge technologies such as [Kubernetes](https://kubernetes.io/), [Istio](https://istio.io), 
+and [Kafka](https://kafka.apache.org/) in order to scale efficiently 
+to the loads expected in large IoT projects. 
+
+SiteWhere embraces a distributed architecture which runs on Kubernetes and provides 
+both infrastructure such as highly-available databases and MQTT brokers as well as 
+microservices to facilitate various aspects of IoT project development. The platform is 
+built with a framework approach using clearly defined APIs so that new technologies may easily 
+be integrated as the IoT ecosystem evolves.
+
+![SiteWhere Administration](https://sitewhere-web.s3.amazonaws.com/github-readme/admin-ui-2.1.0.png "SiteWhere Administration")
+
+## Deployment and Orchestration
+
+SiteWhere is composed of Java-based microservices which are built as
+[Docker](https://www.docker.com/) images and deployed to Kubernetes for
+orchestration. To simplify installation and configuration, [Helm](https://helm.sh/) 
+is used to provide standard templates for various deployment scenarios. Helm
+[charts](https://github.com/sitewhere/sitewhere-recipes/tree/master/charts)
+are provided to supply both the microservices and the dependencies needed to 
+run a complete SiteWhere deployment. Infrastructure components include 
+technologies such as Apache Zookeeper and Kafka, highly available databases such
+as MongoDB, InfluxDB, and Cassandra, and other supporting technologies 
+such as MQTT brokers.
+
+## Microservices
+
+Rather than using a monolithic approach, SiteWhere is based on many microservices
+running as a distributed system. Each microservice is a completely self-contained 
+entity that has its own configuration schema, internal components, data persistence, 
+and interactions with the event processing pipeline. SiteWhere microservices
+are built on top of a custom microservice framework and run as separate
+[Spring Boot](https://projects.spring.io/spring-boot/) processes, each
+contained in its own [Docker](https://www.docker.com/) image.
+
+![SiteWhere Architecture](https://sitewhere-web.s3.amazonaws.com/github-readme/sitewhere-microservices.png "SiteWhere 2.0 Architecture")
+
+### Separation of Concerns
+
+Separating the system logic into microservices allows the interactions
+between various areas of the system to be more clearly defined. It also allows
+parts of the pipeline to be shutdown or fail gracefully without preventing other
+parts of the system from functioning. The event processing pipeline, which spans
+many of the microservices, is buffered by Kafka so that data processing has
+strong delivery guarantees while maintaining high throughput.
+
+### Scale What You Need. Leave Out What You Don't
+
+The microservice architecture allows individual functional areas of the system to be scaled
+independently or left out completely. In use cases where REST processing tends to
+be a bottleneck, multiple REST microservices can be run concurrently to handle the load.
+Conversely, services such as presence management that may not be required can be left
+out so that processing power can be dedicated to other aspects of the system.
+
+## Instance Management
+
+SiteWhere supports the concept of an _instance_, which allows the distributed system 
+to act as a cohesive unit with some aspects addressed at the global level. All of the 
+microservices for a single SiteWhere instance must be running on the same Kubernetes 
+infrastucture, though the system may be spread across tens or hundreds of machines 
+to distribute the processing load.
+
+### Service Mesh with Istio
+
+SiteWhere leverages [Istio](https://istio.io/) to provide a service mesh for
+the system microservices, allowing the platform to be scaled dynamically while 
+also providing a great deal of control over how data is routed. Istio allows
+modern methods such as canary testing and fault injection to be used to 
+provide a more robust and fault-tolerant system. It also allows for detailed
+monitoring and tracing of the data flowing through the components.
+
+### Centralized Configuration Management with Apache ZooKeeper
+
+SiteWhere configuration is stored in [Apache ZooKeeper](https://zookeeper.apache.org/) 
+to allow for a scalable, externalized approach to configuration management. ZooKeeper 
+contains a hierarchical structure which represents the configuration for one or more 
+SiteWhere instances and all of the microservices that are used to realize them. The 
+configuration is replicated for high availabilty.
+
+Each microservice has a direct connection to ZooKeeper and uses the hierarchy to 
+determine its configuration at runtime. Microservices listen for changes to the 
+configuration data and react dynamically to updates. No configuration
+is stored locally within the microservice, which prevents problems with
+keeping services in sync as system configuration is updated.
+
+### Distributed Storage with Rook.io
+
+Since many of the system components such as Zookeeper, Kafka, and various
+databases require access to persistent storage, SiteWhere uses
+[Rook.io](https://rook.io/) within Kubernetes to supply distributed,
+replicated block storage that is resilient to hardware failures while
+still offering good performance characteristics. As storage and throughput
+needs increase over time, new storage devices can be made available
+dynamically. The underlying [Ceph](https://ceph.com/) architecture
+used by Rook.io can handle _exobytes_ of data while allowing data
+to be resilient to failures at the node, rack, or even datacenter level.
+
+## High Performance Data Processing Pipeline
+
+The event processing pipeline in SiteWhere uses [Apache Kafka](https://kafka.apache.org/) 
+to provide a resilient, high-performance mechanism for progressively processing device 
+event data. Microservices can plug in to key points in the event processing pipeline, 
+reading data from well-known inbound topics, processing data, then sending data to well-known 
+outbound topics. External entites that are interested in data at any point in the pipeline 
+can act as consumers of the SiteWhere topics to use the data as it moves through the system.
+
+### Fully Asynchronous Pipeline Processing
+
+The SiteWhere event processing pipeline leverages Kafka's messaging constructs to allow
+device event data to be processed asynchronously. If a microservice shuts down and no other 
+replicas are available to process the load. The data will be queued until a replica starts
+and begins processing again. This acts as a guarantee against data loss as data is always
+backed by Kafka's high-performance storage. SiteWhere microservices leverage Kafka's consumer 
+groups concept to distribute load across multiple consumers and scale processing accordingly.
+
+Using Kafka also has other advantages that are leveraged by SiteWhere. Since all data in
+the distributed log is stored on disk, it is possible to "replay" the event stream based
+on previously gathered data. This is extremely valuable for aspects such as debugging
+processing logic or load testing the system.
+
+## API Connectivity Between Microservices
+
+While device event data generally flows in a pipeline from microservice to microservice on
+Kafka topics, there are also API operations that need to occur in real time between the
+microservices. For instance, device management and event management functions are contained in
+their own microservices, but are required by many other components of the system. Many of the
+SiteWhere microservices offer APIs which may be accessed by other microservices to
+support aspects such as storing persistent data or initiating microservice-specific
+services.
+
+### Using gRPC for a Performance Boost
+
+Rather than solely using REST services based on HTTP 1.x, which tend to have significant
+connection overhead, SiteWhere uses [gRPC](https://grpc.io/) to establish a long-lived
+connection between microservices that need to communicate with each other. Since gRPC uses
+persistent HTTP2 connections, the overhead for interactions is greatly reduced, allowing
+for decoupling without a significant performance penalty. Istio also allows the gRPC
+connections to be multiplexed across multiple replicas of a microservice to scale 
+processing and offer redundancy.
+
+The entire SiteWhere data model has been captured in
+[Google Protocol Buffers](https://developers.google.com/protocol-buffers/) format so that
+it can be used within GRPC services. All of the SiteWhere APIs are exposed directly as
+gRPC services as well, allowing for high-performance, low-latency access to all API
+functions. The REST APIs are still made available via the Web/REST microservice (acting
+as an API gateway), but they use the gRPC APIs underneath to provide a consistent approach 
+to accessing data.
+
+## Multitenancy
+
+SiteWhere is designed for large-scale IoT projects which may involve many system tenants
+sharing a single SiteWhere instance. A key differentiator for SiteWhere compared to most
+IoT platforms is that each tenant runs in isolation from other tenants. By default, tenants
+do not share database resources or pipeline processing and have a completely separate 
+configuration lifecycles. With this approach, each tenant may use its own database 
+technologies, external integrations, and other configuration options. Parts of the tenant's
+processing pipeline may be reconfigured/restarted without causing an interruption to 
+other tenants.
+
+### Data Privacy
+
+An important consequence of the way SiteWhere handles multitenancy is that each tenant's 
+data is separated from the data of other tenants. Most platforms that offer multitenancy
+store data for all tenants in shared tables, differentiated only by a tenant id. The shared
+approach opens up the possibility of one tenant's data corrupting another, which is not
+an acceptable risk in many IoT deployments. In addition, each tenant has its own processing
+pipelines, so in-flight data is never co-mingled either.
+
+Having dedicated resources for tenants can be expensive in terms of memory and processing
+resources, so SiteWhere also offers the concept of _customers_ within each tenant. Customers
+allow data to be differentiated within a tenant, but without having a separate dedicated
+database and pipelines. In cases where colocated data is acceptable, the tenant can have
+any number of customers, which shared the same database and processing pipeline. This allows 
+the best of both worlds in terms of security and scalability.
+
+* * * *
+
+Copyright (c) 2009-2019 [SiteWhere LLC](http://www.sitewhere.com). All rights reserved.

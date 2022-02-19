@@ -1,9 +1,10 @@
-.classpath
-.metadata
-.project
+/bin
+/deploy
 /target
-/.settings
+
+### Gradle ###
 build
-*.iml
-.gradle
-.idea
+.gradle*
+/.settings/
+/.project
+/.classpath
