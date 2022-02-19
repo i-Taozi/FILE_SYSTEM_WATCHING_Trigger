@@ -1,18 +1,81 @@
-# OI Shopping List
 
-![logo](ShoppingList/src/main/res/drawable-hdpi-v5/ic_launcher_shoppinglist.png)
+VWorkflows
+==============
 
-Free, ad-free, open source Android application in 40 languages since 2009.
+[![Build Status](https://travis-ci.org/miho/VWorkflows.svg?branch=master)](https://travis-ci.org/miho/VWorkflows) 
+<a href="https://foojay.io/today/works-with-openjdk">
+   <img align="right" 
+        src="https://github.com/foojayio/badges/raw/main/works_with_openjdk/Works-with-OpenJDK.png"   
+        width="100">
+</a>
 
-OI Shopping List is a powerful application which makes it easy to create and manage checklists for your daily shopping.
+<br>
 
-OI Shopping List makes it easy to add items to a list, check the item off, and remove it from the list.
-The application can track separate prices for each store that you use, and features a high level of customization.
-Font size, sort order, list columns, and list cleanup behavior are all settings controlled by the user.
-All of these features are brought together in a crisp layout that is customizable through a variety of themes.
+Interactive flow/graph visualization for building domain specific visual programming environments. Provides UI bindings for JavaFX.
 
-## Distribution Channels / App stores
+<img src="https://farm2.staticflickr.com/1453/26419281842_799e5d458a_k.jpg">
 
-* **[F-Droid](https://f-droid.org/en/packages/org.openintents.shopping/)** [F-Droid meta data](https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/org.openintents.shopping.yml)
+<img src="https://farm2.staticflickr.com/1445/26511687665_051a5bf7d9_k.jpg">
 
-* **[Google Play](https://play.google.com/store/apps/details?id=org.openintents.shopping)**
+See [http://mihosoft.eu/?p=523](http://mihosoft.eu/?p=523) and [http://mihosoft.eu/?p=564](http://mihosoft.eu/?p=564) 
+for an introduction.
+
+Join the [Developer Group](https://groups.google.com/forum/#!forum/vrl-developers) if you'd like to contribute.
+
+## Maven Coordinates
+
+VWorkflows-Core:
+
+[![Javadocs](https://www.javadoc.io/badge/eu.mihosoft.vrl.workflow/vworkflows-core.svg?label=javadoc-core)](https://www.javadoc.io/doc/eu.mihosoft.vrl.workflow/vworkflows-core)
+
+
+
+
+    <dependency>
+      <groupId>eu.mihosoft.vrl.workflow</groupId>
+      <artifactId>vworkflows-core</artifactId>
+      <version>0.2.3</version>
+    </dependency>
+
+VWorkflows-FX:
+
+[![Javadocs](https://www.javadoc.io/badge/eu.mihosoft.vrl.workflow/vworkflows-fx.svg?label=javadoc-fx)](https://www.javadoc.io/doc/eu.mihosoft.vrl.workflow/vworkflows-fx)
+
+
+Replace version with the desired version (see above for latest version).
+
+    <dependency>
+      <groupId>eu.mihosoft.vrl.workflow</groupId>
+      <artifactId>vworkflows-fx</artifactId>
+      <version>0.2.3</version>
+    </dependency>
+
+## How To Build
+
+### Reqirements
+
+- Java >= 1.8.0_60
+- Internet connection (other dependencies are downloaded automatically)
+- IDE: [Gradle](http://www.gradle.org/) Plugin (not necessary for command line usage)
+
+### IDE
+
+Open the `VWorkflows` [Gradle](http://www.gradle.org/) project in your favourite IDE (tested with NetBeans 8.1) and build it
+by calling the `assemble` task.
+
+### Command Line
+
+Navigate to the [Gradle](http://www.gradle.org/) project (e.g., `path/to/VWorkflows`) and enter the following command
+
+#### Bash (Linux/OS X/Cygwin/other Unix-like OS)
+
+    ./gradlew assemble
+    
+#### Windows (CMD)
+
+    gradlew assemble
+    
+## Test It
+
+Besides the tests defined in `VWorkflows-Core` (`test` task) it is also possible to run a graphical demo that comes with 
+`VWorkflows-Demo` subproject. To run it call the `run` task.
