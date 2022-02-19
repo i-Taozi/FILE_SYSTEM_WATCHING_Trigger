@@ -1,36 +1,20 @@
-# Primitive FTPd
+## Erlang plugin
+[![Build Status](https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:IntellijIdeaPlugins_IntellijErlang_Tests)/statusIcon.svg?guest=1)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=IntellijIdeaPlugins_IntellijErlang_Tests&guest=1)
+[![Build Status](https://travis-ci.org/ignatov/intellij-erlang.svg?branch=master)](https://travis-ci.org/ignatov/intellij-erlang)
 
-FTP server app for android.
+[Erlang Plugin](http://plugins.jetbrains.com/plugin/?pluginId=7083) turns [IntelliJ IDEA](http://www.jetbrains.com/idea/) 
+and other IntelliJ-based products 
+([RubyMine](http://www.jetbrains.com/ruby/), 
+[PyCharm](http://www.jetbrains.com/pycharm/), 
+[WebStorm](http://www.jetbrains.com/webstorm/), etc.) to a convenient [Erlang](http://www.erlang.org/) IDE.
 
-<!--
-[![Build Status](https://travis-ci.org/wolpi/prim-ftpd.png)](https://travis-ci.org/wolpi/prim-ftpd)
--->
-![Code Size](https://img.shields.io/github/languages/code-size/wolpi/prim-ftpd.svg?style=popout)
+## Pre-release builds
+Download [the latest successful plugin](https://teamcity.jetbrains.com/repository/download/IntellijIdeaPlugins_IntellijErlang_Tests/.lastSuccessful/intellij-erlang-0.11.{build.number}.zip?guest=1), hit 'Install plugin from disk...' at 'Plugins' page in 'Settings' of your IDE, and point it to the downloaded archive.
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q8TU8ZQX3WV8J)
+Note for **Mac OS X** users: you need to download the entire zip file, not a several jars (see [Apple discussion forum](https://discussions.apple.com/thread/1483114)).
 
-[<img alt="Get it on F-Droid" height="60" src="https://f-droid.org/badge/get-it-on.png" />](https://f-droid.org/app/org.primftpd)
+## Recent changes
+### The latest version
 
-[<img alt="Get it on Google Play" height="60" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" />](https://play.google.com/store/apps/details?id=org.primftpd)
-
-[<img alt="Get it on Amazon" height="45" style="margin-left: 8px;" src="https://images-na.ssl-images-amazon.com/images/G/01/AmazonMobileApps/amazon-apps-store-us-black.png" />](http://www.amazon.com/wolpi-primitive-FTPd/dp/B00KERCPNY/ref=sr_1_1)
-
-
-## Some features:
-* Can optionally be started on system boot
-* Shows statusbar notification when server is running
-* Server can be stopped from statusbar
-* Shows information about how to connect on main screen
-* Optional wakelock while server runs to avoid uploads and downloads to be aborted
-* Optional encryption via sftp
-* Server can be announced
-* Public key authentication for sftp
-* Optional anonymous login
-* Widget to start/stop server
-* Plugins for powertoggles and tasker
-* Android 7 Quicksettings Tile
-* Optional root access
-* Optional support for Android Storage Access Framework to access external sd-card the official way (NOTE requires selecting a directory, not the root of the sd-card).
-
-
-Want to help translating it? See our shiny [weblate instance](https://pftpd.rocks/projects/pftpd/pftpd/)!
+* IntelliJ 2021.2 support
+* Erlang plugin could be installed and upgraded without restart

@@ -1,9 +1,15 @@
-# IDE files
-.metadata
-RemoteSystemsTempFiles
-.idea
-out
-build
+.idea/workspace.xml
+.idea/modules.xml
+.idea/compiler.xml
+.idea/misc.xml
+.idea/gradle.xml
+.idea/shelf/
+.idea/libraries/
+.idea/.name
 *.iml
+
+/build/
+/jps-plugin/build/
 .gradle
-local.properties
+/out/
+/jps-plugin/out/
