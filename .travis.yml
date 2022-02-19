@@ -1,18 +1,12 @@
-language: android
+language: java
+script: ./gradlew build jacocoTestReport
 
-sudo: false
+jdk:
+  - openjdk8
 
-android:
-  components:
-    - platform-tools
-    - build-tools-23.0.1
-    - android-23
-    - extra-android-support
-  licenses:
-    - '.+'
+before_install:
+  - sudo pip install codecov
 
-script:
- - ./gradlew clean testDebugUnitTest --stacktrace
-    
-notifications:
-  email: false
+after_success:
+  - codecov
+  - python <(curl -s https://raw.githubusercontent.com/TouK/sputnik-ci/master/sputnik-ci.py)
