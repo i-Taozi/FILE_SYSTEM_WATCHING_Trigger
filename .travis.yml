@@ -1,16 +1,25 @@
-sudo: false
-jdk:
-    - oraclejdk8
-language: android
-android:
-  components:
-    - tools # to get the new `repository-11.xml`
-    - tools # to install Android SDK tools
-    - build-tools-29.0.2
-    - android-29
-    - extra-android-support
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
+git:
+  depth: 3
 
-script: ./gradlew clean check assembleDebug
+language: java
+
+jdk:
+  - openjdk8
+
+addons:
+  apt:
+    update: true
+  chrome: stable
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+before_install:
+  - sudo apt-get install -y libappindicator1 fonts-liberation
+  - export CHROME_BIN=/usr/bin/google-chrome
+
+install: true
+
+script: "java -version; ./gradlew clean test chrome"
