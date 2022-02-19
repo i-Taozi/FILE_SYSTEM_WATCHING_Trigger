@@ -1,116 +1,114 @@
-avare
-=====
+GetBack GPS for Android
+=======================
 
-Avare Aviation GPS for Android. Avare is pronounced "Ah-vAir" - like "aware" with a "v" and can be manually installed from our servers (see our website).
+[![GetBack GPS](https://img.shields.io/badge/release-v0.7-blue.svg)](https://f-droid.org/repository/browse/?fdid=com.github.ruleant.getback_gps)
+[![Build Status](https://travis-ci.org/ruleant/getback_gps.svg?branch=master)](https://travis-ci.org/ruleant/getback_gps)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4b5357e56e194b2fade4282f8dc7c182)](https://app.codacy.com/gh/ruleant/getback_gps)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/2277/badge.svg)](https://scan.coverity.com/projects/2277)
+[![Coverage Status](https://coveralls.io/repos/github/ruleant/getback_gps/badge.svg?branch=master)](https://coveralls.io/github/ruleant/getback_gps?branch=master)
 
-Download from the Google Play Store: https://play.google.com/store/apps/details?id=com.ds.avare&hl=en
+[![Translation status](https://hosted.weblate.org/widgets/getback_gps/-/svg-badge.svg)](https://hosted.weblate.org/engage/getback_gps/)
+[![todofy badge](https://todofy.org/b/ruleant/getback_gps)](https://todofy.org/r/ruleant/getback_gps)
+[![Stack Share](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/ruleant/getback-gps)
 
-Avare provides offline moving map on all current FAA charts (VFR Sectional, IFR lo/hi enroute, Approach Plate, WAC & TAC); plus Chart Supplement info, Airport Diagrams w/GPS Taxi, and Terminal Procedures. 
+Open Source Android app for finding your way back to a previously visited location using GPS coordinates.
 
-Also included: GPS status, Terrain/Elevation Maps, 50 Nearest airports, Obstacles, and more. Some FAA Charts cover Puerto Rico, plus parts of Canada, Mexico and the Caribbean. 
+Imagine visiting a town, going to an event or doing some hiking. When finished, you have to find your car again, or the way to the station, or any other point where you started.
+Store a location when you start your trip, and at the end of the day, use the app to find your way back to where you started.
 
-Canadian topo moving maps and unofficial airport info are also now available and volunteers may add other countries.
+More info on the [website](https://ruleant.github.io/getback_gps).
 
-Avare Advantages and Features:
-* Made by & for pilots
-* Easy to learn & use
-* Quick & responsive
-* All free FAA materials & more
-* Runs on most Android devices
-* No ads or invasive permissions
+Features
+--------
 
-More Features:
-* Type in any address or coordinates.
-* METAR & TAF (Internet fetch).
-* ADSB NEXRAD, METAR, TAF, PIREP, Winds (free AddOn apps).
-* Graphic & text TFRs (Internet fetch).
-* Terrain maps & Canada topo, MSL & AGL display.
-* External GPS, autopilot and flite sim (free AddOn apps).
-* Obstacles: Any over 500' AGL within 200' of GPS altitude.
-* Frequencies, runways, fuel availability, & other Chart Supplement info.
-* 13000+ Geo. referenced approach plates and taxi diagrams
-* Landscape or Portrait display Preference, North Up or Track Up (NU/TU).
-* Draw notes directly on-screen, or Pan freely around charts (Draw/Pan).
-* Press any two points on chart for approximate distance between them.
-* Location icon can be centered or track from your placement on screen.
-* GPS compass direction, Bearing, and Distance to and FROM any point on the map by long-pressing one finger on that point. Great for your ATC and CTAF radio calls.
-* Built in CAP (Civil Air Patrol) conventional grid system.
+- determine location based on GPS signal, WiFi or cell phone network :
+    - use best/most accurate location provider
+    - get location updates automatically (based on a time interval or change of location) or
+    - get location on demand (by manually refreshing)
+- save current location as destination
+- add a destination with manual coordinates
+- ‘get back’ mode : indicator pointing to a stored location (showing distance and direction)
+- indicate current speed and current bearing
+- use built-in sensors to get more accurate and quicker updated bearing
+- a compass rose that points to the North
+- detect travel direction and adjust relative direction to destination accordingly
+
+How to get it?
+--------------
+
+The [latest version](https://f-droid.org/repository/browse/?fdid=com.github.ruleant.getback_gps) is available on [F-Droid](https://f-droid.org/). Install the apk directly from the F-Droid website, or use the [F-Droid app](https://f-droid.org/FDroid.apk) to keep automaticaly up to date with future releases.
+
+If you want to try out the latest development version, you can get the code from the [git repository](https://github.com/ruleant/getback_gps) and [build the current development version](https://github.com/ruleant/getback_gps/wiki/Development) yourself.
 
 
-BUILDING:
-Checkout in Android Studio using File->New->Project From Version Control->GitHub. Give URL as https://github.com/apps4av/avare.git, then press Clone.
+Bugs and feature requests
+-------------------------
 
-After Checkout is complete, press the Android Studio Toolbar button "Sync Project With Gradle Files".
+Please report bugs and add feature requests in the Github [issue tracker](https://github.com/ruleant/getback_gps/issues).
 
-RUNNING:
-Run in Android Studio on Emulator, or an actual device.
+Requests for translations to a new language can be made here as well.
 
-TEST EVERY CYCLE:
+Translation
+-----------
 
-Check 1: Server
----------------
+You can help translating the app to your own language : <https://hosted.weblate.org/engage/getback_gps/>.
 
-1. Look at new data on server and chmod a+r all files, chmod g+w all files, and see nothing stands out in size of file
+[![Translation status](https://hosted.weblate.org/widgets/getback_gps/-/multi-auto.svg)](https://hosted.weblate.org/engage/getback_gps/)
 
-2. Verify that number of files are same as number of files in last cycle (use command ls -la | wc -l)
+Is your language not listed? Follow the instructions on the [New translation](https://hosted.weblate.org/new-lang/getback_gps/strings/) tab in Weblate.
 
-Check 2: Databases
+Code documentation
 ------------------
 
-1. Clear data of app, go through registration and before download for database, go to preferences and change cycle to next, then check "show all bases"
+Code documentation of all classes and their methods can be found [here](https://ruleant.github.io/getback_gps/javadoc/index.html).
 
-2. Download database
+Third party material
+--------------------
 
-3. Go to simulation mode
+- res/drawable-*/ic_action_refresh.png
+    - From the Action Bar Icon Pack, see http://developer.android.com/design/style/iconography.html
+    - origin : https://developer.android.com/downloads/design/Android_Design_Icons_20131106.zip
+    - license : Apache 2.0
 
-4. Find BOS
+- src/com/github/ruleant/getback_gps/lib/FormatUtils.java
+    - Method FormatUtils.formatDist() is based on method formatDist in class MixUtils that is part of mixare
+    - origin : http://www.java2s.com/Code/Android/Date-Type/FormatDistance.htm
+    - license : GPLv3+
 
-5. See text Chart Supplement is correct (runways appear, freqencies appear, all fields look filled properly)
+- .utility/copy-javadoc-to-gh-pages.sh
+    - This script was originally written by Xiaohao Ma in the aws-mock project and modified by Ben Limmer.
+      See script file for more details.
+    - license : Apache 2.0
 
-6. Go to Map and verify runways extensions are drawn correctly
+- .utility/remove-incomplete-translations
+    - Based on scripts/remove-incomplete-mo of the phpMyAdmin project
+    - origin : https://github.com/phpmyadmin/phpmyadmin/blob/master/scripts/remove-incomplete-mo
+    - license : GPLv2
 
-7. Go to Plan and create a plan KBOS BOS V16 CMK, verify V16 is converetd to fixes and all are identified
+- Crouton library
+    - version : v1.8.1
+    - website : https://github.com/keyboardsurfer/Crouton
+    - license : Apache 2.0
 
-8. Verify that OPLA airport is found and its Chart Supplement from OUR-AP is correct
+Credits
+-------
 
-9. Go to Map, see charts (Sectional, TAC, WAC, IFR low, IFR high, IFR area) show in fully zoomed out, note no cut-off edges, no missing areas, no lines
+Getback GPS for Android was made possible by many contributers and sponsors, see [Credits](https://github.com/ruleant/getback_gps/wiki/Credits).
 
-10. Pan to go to Alaska, then to Caribbean and see there is no odd missing areas
+License
+-------
 
-Check 3: Full data
-------------------
+Copyright (C) 2012-2021 Dieter Adriaenssens <ruleant@users.sourceforge.net>
 
-1. Download following: Plates Georeference Info, NewYork sectional, Boston TAC, CF-19 WAC, IFR Low NE, IFR Hi NE, IFR area ANC, Canada ADs, Minimums T/A, Plates MA, VFR area Canada, VFR area MA, Chart Supplement NE, Elevation NE, Boston Heli, Grand Canyon
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
 
-2. Find airport BOS
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-3. Go to Map, see charts (Sectional, TAC, WAC, IFR low, IFR high) show fully zoomed in, out, and intermediate. Note no cut-off edges, no missing areas, no lines, aircraft on center of airport
-
-4. Find airport ANC
-
-5. Go to Map, see charts (IFR area) show fully zoomed in, out, and intermediate. Note no cut-off edges, no missing areas, no lines, aircraft on center of airport
-
-6. Find airport GCN
-
-7. Go to Map, see charts (Heli/Other) for grand canyon, show fully zoomed in, out, and intermediate. Note no cut-off edges, no missing areas, no lines, aircraft on center of airport
-
-8. Find airport BOS
-
-9. Go to Map, see charts (Heli/Other) for boston heli, show fully zoomed in, out, and intermediate. Note no cut-off edges, no missing areas, no lines, aircraft on center of airport
-
-10. Find airport BVY
-
-11. Go to Chart Supplement, and see graphical Chart Supplement has correct date and is correctly showing BVY on it
-
-12. Go to Plate, and see Airport Diagram with georef and correct date, Area plate with georef, t/o and dep minimums with correct date and airport, and see some approach plates with correct date and georef info
-
-13. In Plate see if AP button for some approach plates is green and loads correctly to Plan
-
-14. Find airport CYVR
-
-15. Go to plate and see that airport diagram shows in Plates, area plate with georef shows as well
-
-16. Find airport BOS, go to 3D and see all obstacles are showing
-
-17. Click on airport KBED, verify VOR radials BOS313015, make sure SUA R4102A, and 4102B show with altitude, TX/RX frequencies, and Note.
-
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
