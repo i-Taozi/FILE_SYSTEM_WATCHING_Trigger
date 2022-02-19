@@ -1,2 +1,0 @@
-* New translation: eu, cs
-* Translation updates es, fr, nl

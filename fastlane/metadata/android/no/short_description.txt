@@ -1,1 +1,0 @@
-ToGoZip: Legg til i zip for android-s share / send-menyen.

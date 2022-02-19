@@ -1,47 +1,32 @@
-# ToGoZip: "Add To Zip" for Android's Share/Send Menu
-<a href="https://f-droid.org/packages/de.k3b.android.toGoZip" target="_blank">
-<img src="https://raw.githubusercontent.com/k3b/ToGoZip/master/app/src/main/res/drawable-xxhdpi/ic_launcher.png" alt="ToGoZip logo" height="100"/>
-<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="100"/>
-</a>
+OpenRedmine
+===========
 
-Easy collection of files from every supporting app into one ZIP file while
-being "on the go" or offline.
+[![Join the chat at https://gitter.im/OpenRedmine/Lobby](https://badges.gitter.im/OpenRedmine/Lobby.svg)](https://gitter.im/OpenRedmine/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This collecting "2go.zip" file is like a suitcase in which you can put things (files)
-from nearly everywhere (from every app that supports "share"/"send") and
-that can travel everywhere (via email, Bluetooth, NFC).
+OpenRedmine is an android Redmine client. This project is open source.
 
-In the beginning this program was developed to collect new Android calendar
-entry [ics-files](https://f-droid.org/wiki/page/de.k3b.android.calendar.ics.adapter)
-in order to transfer them to a desktop PC's calendar.
+<a href="https://f-droid.org/repository/browse/?fdid=jp.redmine.redmineclient" target="_blank"><img src="https://f-droid.org/badge/get-it-on.png" height="90"/></a>
+<a href="https://play.google.com/store/apps/details?id=jp.redmine.redmineclient" target="_blank">
+<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="90"/></a>
 
-## Features
-* Supports view/send/SendMultiple for file(s), folder(s), URLs and texts.
-* Automatic file renaming in the ZIP if the same name with different file date already exists.
-* If settings/DebugMode is enabled, processing is logged to logcat and to clipboard as text.
-* Settings automatically pop up if the ZIP folder is not writable.
-* [Translations](https://crowdin.com/project/togozip) : bn, de, en, es, fr, hi, hu, id, ja, nl, no, pl, pt, tr, zh-CN, zh-TW
-  * [![Crowdin](https://d322cqt584bo4o.cloudfront.net/togozip/localized.svg)](https://crowdin.com/project/togozip) [Help us to translate into other languages.](https://crowdin.com/project/togozip)
-* Minimal requirements: Works with android-2.1 (API 7) and up.
+Features
+==========
+* Allow to connect UNSAFE SSL sites powered by transdroid
+* View issues offline
+* Get API key from web site
+* Filter (Status/Tracker/Category/Priority)
+* Download file
+* Wiki
 
-## Required Android Permissions
-* WRITE_EXTERNAL_STORAGE used to store the created/updated ZIP file.
-* The Android device must have external storage (aka SD card) where the ZIP file is written to.
+Version
+==========
+Current commit is alpha version.
+Some feature is not complete or incorrect.
 
-## Links
-* [Changelog](https://github.com/k3b/toGoZip/wiki/History)
-* [Technical Features](https://github.com/k3b/toGoZip/wiki/Features)
+License
+==========
+See [lisence.md](OpenRedmine/src/main/res/raw/lisence.md)
 
-## Screenshots
-![Share menu with ToGoZip entry](https://raw.githubusercontent.com/k3b/ToGoZip/master/fastlane/metadata/android/en-US/images/phoneScreenshots/1-send.png)
-
-![App settings](https://github.com/k3b/ToGoZip/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/2-settings.png)
-
-
------
-
-## Donations
-If you like this app, please consider [donating to F-Droid](https://f-droid.org/donate).
-
-Since Android development is a hobby (and an educational tool) I don't want any money for my apps, so donations should go to projects I benefit from.
-
+Contributors and Used references
+==========
+See [contributors.md](OpenRedmine/src/main/res/raw/contributors.md)

@@ -1,4 +1,0 @@
-Translations:
-
-* new ar, ru.
-* updated bn, ja

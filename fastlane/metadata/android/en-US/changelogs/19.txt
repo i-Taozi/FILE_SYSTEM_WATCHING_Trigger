@@ -1,1 +1,0 @@
-* Minified reduced apk-size from 536kb to 178kb

@@ -1,2 +1,0 @@
-* new: crash-log written to file or clipboard
-* japanese language translation update

@@ -1,1 +1,0 @@
-ToGoZip: Add to Zip az androidos megosztás / küldés menühöz.

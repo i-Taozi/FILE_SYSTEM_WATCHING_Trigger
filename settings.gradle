@@ -1,3 +1,1 @@
-// startParameter.offline=true
-
-include ':app', ':libK3bZip', ':libK3b', ':libK3bAndroidZip'
+include ':OpenRedmine'
