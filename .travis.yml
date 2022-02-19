@@ -1,12 +1,16 @@
-language: java
-script: ./gradlew build jacocoTestReport
-
+sudo: false
 jdk:
-  - openjdk8
+    - oraclejdk8
+language: android
+android:
+  components:
+    - tools # to get the new `repository-11.xml`
+    - tools # to install Android SDK tools
+    - build-tools-29.0.2
+    - android-29
+    - extra-android-support
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
 
-before_install:
-  - sudo pip install codecov
-
-after_success:
-  - codecov
-  - python <(curl -s https://raw.githubusercontent.com/TouK/sputnik-ci/master/sputnik-ci.py)
+script: ./gradlew clean check assembleDebug
