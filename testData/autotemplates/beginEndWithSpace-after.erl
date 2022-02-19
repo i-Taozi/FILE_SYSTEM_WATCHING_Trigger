@@ -1,3 +1,0 @@
-foo() -> begin
-           <caret>
-         end

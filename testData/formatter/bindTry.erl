@@ -1,2 +1,0 @@
-test() ->
-  X = try<caret>

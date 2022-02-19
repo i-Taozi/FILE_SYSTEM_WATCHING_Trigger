@@ -1,3 +1,0 @@
-test() ->
-  try
-    fail()<caret>

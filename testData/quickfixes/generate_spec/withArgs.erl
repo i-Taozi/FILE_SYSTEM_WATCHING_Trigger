@@ -1,1 +1,0 @@
-foo<caret>(One, Two, Three) -> ok.

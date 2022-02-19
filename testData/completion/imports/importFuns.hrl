@@ -1,1 +1,0 @@
--import(funs, [fun_a/0]).

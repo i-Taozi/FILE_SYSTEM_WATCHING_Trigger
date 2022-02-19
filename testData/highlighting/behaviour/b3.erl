@@ -1,3 +1,0 @@
--module(b3).
--callback init1(ok) -> ok.
--callback init3(ok) -> ok.

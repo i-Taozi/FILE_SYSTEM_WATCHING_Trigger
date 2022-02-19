@@ -1,3 +1,0 @@
-test() ->
-  receive
-    X -><caret>

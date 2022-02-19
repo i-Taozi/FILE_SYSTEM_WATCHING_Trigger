@@ -1,1 +1,0 @@
-f(Timings) -> Rps = 1000000 / ((lists:sum(Timings) / length(Timings)) / 1000).

@@ -1,4 +1,0 @@
-foo() ->
-  receive
-    <caret>
-  end

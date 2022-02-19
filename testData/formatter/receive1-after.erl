@@ -1,4 +1,0 @@
-test() ->
-  receive
-    <caret>
-  end

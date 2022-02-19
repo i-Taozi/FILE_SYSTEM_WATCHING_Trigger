@@ -1,2 +1,0 @@
-#!
-<caret>/bin/bash

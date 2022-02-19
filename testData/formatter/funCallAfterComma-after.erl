@@ -1,3 +1,0 @@
-test() ->
-  test(arg,
-    <caret>).

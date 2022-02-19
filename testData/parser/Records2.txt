@@ -1,2 +1,0 @@
-ERL_FILE
-  <empty list>

@@ -1,77 +1,73 @@
-plugins {
-  id 'org.jetbrains.intellij' version "0.6.5"
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "io.freefair.gradle:lombok-plugin:$gradlePluginLombokVersion"
+        classpath "com.github.ben-manes:gradle-versions-plugin:$gradlePluginVersionsVersion"
+        classpath "gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:$licenseGradlePluginVersion"
+    }
 }
 
-version = "${version}.$buildNumber"
 allprojects {
-  repositories { mavenCentral() }
-  apply plugin: 'java'
-  sourceCompatibility = javaVersion
-  targetCompatibility = javaVersion
-  tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+    group = "$groupPackage"
+    version = "$projectVersion"
+}
 
-  sourceSets {
-    main {
-      java.srcDirs 'src', 'gen'
-      resources.srcDirs 'resources', 'plugin/resources'
+subprojects {
+
+    apply plugin: "signing"
+    apply plugin: "java"
+    apply plugin: "jacoco"
+    apply plugin: "maven-publish"
+    apply plugin: "com.github.ben-manes.versions"
+    apply plugin: "com.github.hierynomus.license"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
     }
+
+    dependencies {
+        compileOnly("org.projectlombok:lombok:$lombokVersion")
+        annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+        testImplementation("de.alpharogroup:test-objects:$testObjectsVersion")
+        testImplementation("de.alpharogroup:silly-collections:$sillyCollectionsVersion")
+        testImplementation("de.alpharogroup:silly-beans:$sillyBeansVersion")
+        testImplementation("de.alpharogroup:jobj-contract-verifier:$jobjContractVerifierVersion")
+        testImplementation("org.meanbean:meanbean:$meanbeanVersion")
+        testImplementation("org.testng:testng:$testngVersion")
+    }
+
+    // workhack for license issue #76
+    gradle.startParameter.excludedTaskNames += "licenseMain"
+    gradle.startParameter.excludedTaskNames += "licenseTest"
+
+    sourceCompatibility = "$projectSourceCompatibility"
+
+    javadoc {
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption("html5", true)
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
     test {
-      java.srcDir 'tests'
+        useTestNG()
     }
-  }
 
-  apply plugin: 'org.jetbrains.intellij'
-  intellij {
-    version ideaVersion
-    plugins = ['copyright', 'java']
-    downloadSources Boolean.valueOf(sources)
-    sameSinceUntilBuild Boolean.valueOf(isEAP)
-    alternativeIdePath localIdePath
-  }
-  
-  def compilationPackages = ['org/intellij/erlang/build/**', 'org/intellij/erlang/jps/**']
-  
-  test {
-    useJUnit {
-      exclude compilationPackages
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled true
+        }
     }
-    testLogging {
-      exceptionFormat = 'full'
-    }
-  }
 
-  task testCompilation(type: Test, group: 'Verification', dependsOn: [classes, testClasses]) {
-    useJUnit {
-      include compilationPackages
-    }
-    testLogging {
-      exceptionFormat = 'full'
-    }
-    systemProperties = [
-      "erlang.sdk.path": System.getProperty("erlang.sdk.path")
-    ]
-  }
-}
-
-repositories {
-  jcenter()
-  flatDir {
-    dirs 'libs'
-  }
-}
-
-dependencies {
-  compile name: 'OtpErlang'
-  compile project('jps-plugin')
-}
-
-apply plugin: 'idea'
-idea {
-  project {
-    jdkName = javaVersion
-    languageLevel = javaVersion
-  }
-  module {
-    generatedSourceDirs += file('gen')
-  }
+    check.dependsOn jacocoTestReport
 }

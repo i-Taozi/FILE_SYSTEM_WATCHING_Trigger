@@ -1,3 +1,0 @@
-foo() ->
-  fun
-    (ok) -><caret>

@@ -1,2 +1,0 @@
--module(testappuser).
--include_lib("testapp/include/testapp.hrl").

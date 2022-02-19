@@ -1,1 +1,0 @@
--include_lib("testapp/include/testapp.hrl").

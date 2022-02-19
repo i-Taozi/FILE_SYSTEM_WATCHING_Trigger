@@ -1,1 +1,0 @@
--import(testapp, [foo/0]).

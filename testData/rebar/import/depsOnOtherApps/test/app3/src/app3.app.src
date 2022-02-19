@@ -1,2 +1,0 @@
-{application, app3,
- [{applications, [app1        ]}]}.

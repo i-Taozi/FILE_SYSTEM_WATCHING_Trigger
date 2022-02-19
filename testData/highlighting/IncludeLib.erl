@@ -1,2 +1,0 @@
--include_lib("<error>lib/test_include_file.hrl</error>").
--include_lib(<error>""</error>).

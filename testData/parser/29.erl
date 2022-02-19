@@ -1,1 +1,0 @@
-foo(M) -> fun M:some_function/1.

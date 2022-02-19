@@ -1,1 +1,0 @@
--define(S(A), erlang:display(??A)).

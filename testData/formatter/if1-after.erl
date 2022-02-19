@@ -1,4 +1,0 @@
-test() ->
-  if
-    <caret>
-  end

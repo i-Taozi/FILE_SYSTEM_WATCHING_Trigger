@@ -1,3 +1,0 @@
-foo() ->
-  begin
-    test(),<caret>

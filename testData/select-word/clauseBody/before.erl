@@ -1,3 +1,0 @@
-foo() ->
-  first,
-  <caret>second.
