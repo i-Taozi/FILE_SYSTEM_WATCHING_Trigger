@@ -1,12 +1,6 @@
 .gradle
-build
-out
-.gradletasknamecache
-*.iml
-*.ipr
-*.iws
 .idea
-README.html
-.classpath
-.project
-.settings
+.DS_Store
+/build
+*.iml
+/*.properties

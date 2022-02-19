@@ -1,34 +1,39 @@
-sudo: false
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-language: groovy
+# travis build for #toGoZip (https://github.com/k3b/ToGoZip/)
+language: android
 
 jdk:
-#- oraclejdk11
-- openjdk8
-#- openjdk11
+  - oraclejdk8
 
-# matrix:
-#   include:
-#     - jdk: oraclejdk11
-#       before_install:
-#         - rm "${JAVA_HOME}/lib/security/cacerts"
-#         - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
+addons:
+  apt:
+    packages:
+# graphviz to render javadoc uml
+# https://docs.travis-ci.com/user/multi-os/
+      - graphviz
 
-env:
-- TERM=dumb
+android:
+  components:
+    # https://github.com/travis-ci/travis-ci/issues/5036
+    - tools
 
-install: true
+    # values in gradle.properties and .travis must be the same
+    - android-29
 
-before_script:
-  - ./gradlew --version
+    - add-on
+    - extra
+
+before_install:
+# http://stackoverflow.com/questions/33820638/travis-yml-gradlew-permission-denied
+# must execute
+# git update-index --chmod=+x gradlew
+# instead of 
+# - chmod +x gradlew
+#
+# https://stackoverflow.com/questions/52274229/travis-ci-android-28-licenses-have-not-been-accepted
+# - yes | sdkmanager "platforms;android-28"
+
+  - yes | sdkmanager "platforms;android-23"
 
 script:
-  - ./gradlew test jacocoTestReport coveralls
+  - jdk_switcher use oraclejdk8
+  - ./gradlew assemble  libK3b:test libK3bZip:test

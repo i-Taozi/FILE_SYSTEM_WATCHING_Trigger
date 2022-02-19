@@ -1,1 +1,3 @@
-rootProject.name = 'pug4j-spring-boot-starter'
+// startParameter.offline=true
+
+include ':app', ':libK3bZip', ':libK3b', ':libK3bAndroidZip'
